@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model products {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  price       Float
+  discount    Float
+  info        Info
+  cpu_info    Cpu_Info
+  in_stock    Int
+  quantity    Int        @default(0)
+  rating      Float
+  comments    Comments[]
+  brands      Brands     @relation(fields: [product_id], references: [id])
+  product_id  String     @db.ObjectId
+  Categories  Category?  @relation(fields: [product_id], references: [id])
+  images      String[]
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+}
+
+model Category {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+  products    products[]
+}
+
+model Brands {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+  products    products[]
+}
+
+model Comments {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  rating      Float
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+  author      User      @relation(fields: [author_id], references: [id])
+  author_id   String    @db.ObjectId
+  products    products? @relation(fields: [comment_id], references: [id])
+  comment_id  String?   @db.ObjectId
+}
+
+model User {
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  email    String     @unique
+  name     String
+  password String
+  comments Comments[]
+}
+
+type Info {
+  type             String
+  proccessor       String
+  memory           String
+  storage          String
+  graphic          String
+  operating_system String
+}
+
+type Cpu_Info {
+  type  String
+  speed String
+  gen   String
+}

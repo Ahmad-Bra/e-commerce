@@ -1,0 +1,30 @@
+{
+  "name": "SuperFast Laptop X200",
+  "description": "A powerful laptop with high-speed performance and sleek design.",
+  "price": 1499.99,
+  "discount": 150.00,
+  "info": {
+    "weight": "1.5kg",
+    "color": "silver"
+  },
+  "cpu_info": {
+    "model": "Intel Core i7-11800H",
+    "cores": 8,
+    "threads": 16
+  },
+  "in_stock": 25,
+  "quantity": 0,
+  "rating": 4.5,
+  "brands": {
+    "name": "SuperTech",
+    "description": "description"
+  },
+  "categories": {
+    "name": "Laptops",
+    "description": "description"
+  },
+  "images": [
+    "https://example.com/images/product1_front.jpg",
+    "https://example.com/images/product1_side.jpg"
+  ]
+}

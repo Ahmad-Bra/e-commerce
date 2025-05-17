@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model products {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  slug        String
+  price       Float
+  discount    Float
+  info        Info
+  cpu_info    Cpu_Info
+  in_stock    Int        @default(0)
+  quantity    Int        @default(0)
+  rating      Float
+  comments    Comments[]
+  brands      Brands     @relation(fields: [brandId], references: [id])
+  categories  Category   @relation(fields: [categoryId], references: [id])
+  brandId     String     @db.ObjectId
+  categoryId  String     @db.ObjectId
+  images      String[]
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+}
+
+model Category {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+  products    products[]
+}
+
+model Brands {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+  products    products[]
+}
+
+model Comments {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  rating      Float
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+  author      User      @relation(fields: [author_id], references: [id])
+  author_id   String    @db.ObjectId
+  products    products? @relation(fields: [comment_id], references: [id])
+  comment_id  String?   @db.ObjectId
+}
+
+model User {
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  email    String     @unique
+  name     String
+  password String
+  comments Comments[]
+}
+
+type Info {
+  weight String
+  color  String
+}
+
+type Cpu_Info {
+  model   String
+  cores   Int
+  threads Int
+}
