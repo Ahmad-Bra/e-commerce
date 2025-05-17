@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.8.3"}
+{"root":["./generated/prisma/client.d.ts","./generated/prisma/default.d.ts","./generated/prisma/edge.d.ts","./generated/prisma/index.d.ts","./generated/prisma/wasm.d.ts","./generated/prisma/runtime/index-browser.d.ts","./generated/prisma/runtime/library.d.ts","./src/index.ts","./src/controlers/brands.ts","./src/controlers/category.ts","./src/controlers/products.ts","./src/routes/brands.route.ts","./src/routes/categories.route.ts","./src/routes/products.route.ts"],"version":"5.8.3"}
