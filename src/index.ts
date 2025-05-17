@@ -14,13 +14,12 @@ app.get("/", (request: Request, respones: Response) => {
   return;
 });
 
-// product API
-app.use("/api", ProductRoutes);
-
 // categories API
 app.use("/api", categoriesRoutes);
 
 // brands API
 app.use("/api", brandsRoutes);
 
+// product API
+app.use("/api", ProductRoutes);
 app.listen(PORT, () => console.log(`listing in port ${PORT}`));

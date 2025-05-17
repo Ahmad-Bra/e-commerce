@@ -3,7 +3,7 @@ import { PrismaClient } from "../../generated/prisma/index";
 const prisma = new PrismaClient();
 export class Products {
   public async getProducts(request: Request, respones: Response) {
-    const { search, orderBy, limit } = request.query;
+    const { search, orderBy } = request.query;
     try {
       if (search || orderBy) {
         const products = await prisma.products.findMany({
@@ -47,7 +47,6 @@ export class Products {
           comments: true,
         },
       });
-
       respones.status(200).json(products);
       return;
     } catch (error) {

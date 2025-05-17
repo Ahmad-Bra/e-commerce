@@ -16,10 +16,10 @@ app.get("/", (request, respones) => {
     respones.status(200).send("hi");
     return;
 });
-// product API
-app.use("/api", products_route_1.router);
 // categories API
 app.use("/api", categories_route_1.router);
 // brands API
 app.use("/api", brands_route_1.router);
+// product API
+app.use("/api", products_route_1.router);
 app.listen(PORT, () => console.log(`listing in port ${PORT}`));

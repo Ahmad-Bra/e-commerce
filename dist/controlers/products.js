@@ -15,7 +15,7 @@ const prisma = new index_1.PrismaClient();
 class Products {
     getProducts(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { search, orderBy, limit } = request.query;
+            const { search, orderBy } = request.query;
             try {
                 if (search || orderBy) {
                     const products = yield prisma.products.findMany({
