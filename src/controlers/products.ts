@@ -41,11 +41,11 @@ export class Products {
         return;
       }
       const products = await prisma.products.findMany({
-        // include: {
-        //   categories: true,
-        //   brands: true,
-        //   comments: true,
-        // },
+        include: {
+          categories: true,
+          brands: true,
+          // comments: true,
+        },
       });
       respones.status(200).json(products);
       return;
