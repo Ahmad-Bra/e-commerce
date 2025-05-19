@@ -14,21 +14,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model products {
+model Products {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
+  slug        String
   price       Float
   discount    Float
   info        Info
   cpu_info    Cpu_Info
-  in_stock    Int
+  in_stock    Int        @default(0)
   quantity    Int        @default(0)
   rating      Float
   comments    Comments[]
-  brands      Brands     @relation(fields: [product_id], references: [id])
-  product_id  String     @db.ObjectId
-  Categories  Category?  @relation(fields: [product_id], references: [id])
+  brand       Brand      @relation(fields: [brandId], references: [id])
+  category    Category   @relation(fields: [categoryId], references: [id])
+  brandId     String     @db.ObjectId
+  categoryId  String     @db.ObjectId
   images      String[]
   created_at  DateTime   @default(now())
   updated_at  DateTime   @default(now())
@@ -40,16 +42,16 @@ model Category {
   description String
   created_at  DateTime   @default(now())
   updated_at  DateTime   @default(now())
-  products    products[]
+  products    Products[]
 }
 
-model Brands {
+model Brand {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   created_at  DateTime   @default(now())
   updated_at  DateTime   @default(now())
-  products    products[]
+  products    Products[]
 }
 
 model Comments {
@@ -61,8 +63,8 @@ model Comments {
   updated_at  DateTime  @default(now())
   author      User      @relation(fields: [author_id], references: [id])
   author_id   String    @db.ObjectId
-  products    products? @relation(fields: [comment_id], references: [id])
-  comment_id  String?   @db.ObjectId
+  product     Products? @relation(fields: [product_id], references: [id])
+  product_id  String    @db.ObjectId
 }
 
 model User {
@@ -74,16 +76,12 @@ model User {
 }
 
 type Info {
-  type             String
-  proccessor       String
-  memory           String
-  storage          String
-  graphic          String
-  operating_system String
+  weight String
+  color  String
 }
 
 type Cpu_Info {
-  type  String
-  speed String
-  gen   String
+  model   String
+  cores   Int
+  threads Int
 }

@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.7.0
- * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+ * Prisma Client JS version: 6.8.1
+ * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
  */
 Prisma.prismaVersion = {
-  client: "6.7.0",
-  engine: "3cff47a7f5d65c3ea74883f1d736e41d68ce91ed"
+  client: "6.8.1",
+  engine: "2060c79ba17c6bb9f5823312b6f6b7f4a845738e"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -138,7 +138,7 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
-exports.Prisma.BrandsScalarFieldEnum = {
+exports.Prisma.BrandScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
@@ -154,7 +154,7 @@ exports.Prisma.CommentsScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   author_id: 'author_id',
-  comment_id: 'comment_id'
+  product_id: 'product_id'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
@@ -176,9 +176,9 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  products: 'products',
+  Products: 'Products',
   Category: 'Category',
-  Brands: 'Brands',
+  Brand: 'Brand',
   Comments: 'Comments',
   User: 'User'
 };

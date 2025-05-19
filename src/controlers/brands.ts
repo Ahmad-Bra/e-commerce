@@ -6,7 +6,7 @@ export class Brands {
     const { search, orderBy } = request.query;
     try {
       if (search || orderBy) {
-        const brands = await prisma.brands.findMany({
+        const brands = await prisma.brand.findMany({
           orderBy: [
             {
               name: orderBy == "asc" ? "asc" : "desc",
@@ -35,7 +35,7 @@ export class Brands {
         respones.status(200).json(brands);
         return;
       }
-      const brands = await prisma.brands.findMany();
+      const brands = await prisma.brand.findMany();
 
       respones.status(200).json(brands);
       return;
@@ -53,7 +53,7 @@ export class Brands {
         return;
       }
 
-      const brands = await prisma.brands.findUnique({
+      const brands = await prisma.brand.findUnique({
         where: {
           id,
         },
@@ -70,7 +70,7 @@ export class Brands {
     const body = request.body;
 
     try {
-      const createdBrands = await prisma.brands.create({
+      const createdBrands = await prisma.brand.create({
         data: {
           ...body,
         },
@@ -91,7 +91,7 @@ export class Brands {
 
     try {
       if (id) {
-        await prisma.brands.delete({ where: { id } });
+        await prisma.brand.delete({ where: { id } });
 
         respones
           .status(200)

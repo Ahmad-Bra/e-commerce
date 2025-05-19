@@ -18,7 +18,7 @@ class Brands {
             const { search, orderBy } = request.query;
             try {
                 if (search || orderBy) {
-                    const brands = yield prisma.brands.findMany({
+                    const brands = yield prisma.brand.findMany({
                         orderBy: [
                             {
                                 name: orderBy == "asc" ? "asc" : "desc",
@@ -47,7 +47,7 @@ class Brands {
                     respones.status(200).json(brands);
                     return;
                 }
-                const brands = yield prisma.brands.findMany();
+                const brands = yield prisma.brand.findMany();
                 respones.status(200).json(brands);
                 return;
             }
@@ -66,7 +66,7 @@ class Brands {
                     respones.status(400).json({ message: "error params value" });
                     return;
                 }
-                const brands = yield prisma.brands.findUnique({
+                const brands = yield prisma.brand.findUnique({
                     where: {
                         id,
                     },
@@ -85,7 +85,7 @@ class Brands {
         return __awaiter(this, void 0, void 0, function* () {
             const body = request.body;
             try {
-                const createdBrands = yield prisma.brands.create({
+                const createdBrands = yield prisma.brand.create({
                     data: Object.assign({}, body),
                     include: {
                         products: true,
@@ -106,7 +106,7 @@ class Brands {
             const { id } = request.params;
             try {
                 if (id) {
-                    yield prisma.brands.delete({ where: { id } });
+                    yield prisma.brand.delete({ where: { id } });
                     respones
                         .status(200)
                         .json({ message: "your brand deleted successfuly" });

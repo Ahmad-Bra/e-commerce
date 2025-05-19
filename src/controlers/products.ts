@@ -32,8 +32,8 @@ export class Products {
             ],
           },
           include: {
-            categories: true,
-            brands: true,
+            category: true,
+            brand: true,
             comments: true,
           },
         });
@@ -42,9 +42,9 @@ export class Products {
       }
       const products = await prisma.products.findMany({
         include: {
-          categories: true,
-          brands: true,
-          // comments: true,
+          category: true,
+          brand: true,
+          comments: true,
         },
       });
       respones.status(200).json(products);
@@ -85,8 +85,8 @@ export class Products {
           ...body,
         },
         include: {
-          categories: true,
-          brands: true,
+          category: true,
+          brand: true,
           comments: true,
         },
       });

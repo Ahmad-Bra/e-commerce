@@ -44,8 +44,8 @@ class Products {
                             ],
                         },
                         include: {
-                            categories: true,
-                            brands: true,
+                            category: true,
+                            brand: true,
                             comments: true,
                         },
                     });
@@ -54,9 +54,9 @@ class Products {
                 }
                 const products = yield prisma.products.findMany({
                     include: {
-                        categories: true,
-                        brands: true,
-                        // comments: true,
+                        category: true,
+                        brand: true,
+                        comments: true,
                     },
                 });
                 respones.status(200).json(products);
@@ -99,8 +99,8 @@ class Products {
                 const createdProduct = yield prisma.products.create({
                     data: Object.assign({}, body),
                     include: {
-                        categories: true,
-                        brands: true,
+                        category: true,
+                        brand: true,
                         comments: true,
                     },
                 });
