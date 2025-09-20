@@ -11,11 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Products = void 0;
 const index_1 = require("../../generated/prisma/index");
+const redis_middleware_1 = require("../middleware/cashe/redis.middleware");
 const prisma = new index_1.PrismaClient();
 class Products {
     getProducts(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { search, orderBy } = request.query;
+            const { search = "", orderBy } = request.query;
             try {
                 if (search || orderBy) {
                     const products = yield prisma.products.findMany({
@@ -49,16 +50,28 @@ class Products {
                             comments: true,
                         },
                     });
+                    // set data to redis cache
+                    redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, products);
                     respones.status(200).json(products);
                     return;
                 }
                 const products = yield prisma.products.findMany({
+                    orderBy: [
+                        {
+                            name: "asc",
+                        },
+                        {
+                            id: "asc",
+                        },
+                    ],
                     include: {
                         category: true,
                         brand: true,
                         comments: true,
                     },
                 });
+                // set data to redis cache
+                redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, products);
                 respones.status(200).json(products);
                 return;
             }
@@ -82,6 +95,8 @@ class Products {
                         id,
                     },
                 });
+                // set data to redis cache
+                redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, product);
                 respones.status(200).json(product);
                 return;
             }

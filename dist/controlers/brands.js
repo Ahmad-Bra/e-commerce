@@ -11,11 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Brands = void 0;
 const index_1 = require("../../generated/prisma/index");
+const redis_middleware_1 = require("../middleware/cashe/redis.middleware");
 const prisma = new index_1.PrismaClient();
 class Brands {
     getBrands(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { search, orderBy } = request.query;
+            const { search = "", orderBy } = request.query;
             try {
                 if (search || orderBy) {
                     const brands = yield prisma.brand.findMany({
@@ -43,11 +44,18 @@ class Brands {
                                 },
                             ],
                         },
+                        include: { products: true },
                     });
+                    // set data to redis cache
+                    redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, brands);
                     respones.status(200).json(brands);
                     return;
                 }
-                const brands = yield prisma.brand.findMany();
+                const brands = yield prisma.brand.findMany({
+                    include: { products: true },
+                });
+                // set data to redis cache
+                redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, brands);
                 respones.status(200).json(brands);
                 return;
             }
@@ -66,12 +74,14 @@ class Brands {
                     respones.status(400).json({ message: "error params value" });
                     return;
                 }
-                const brands = yield prisma.brand.findUnique({
+                const brand = yield prisma.brand.findUnique({
                     where: {
                         id,
                     },
                 });
-                respones.status(200).json(brands);
+                // set data to redis cache
+                redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, brand);
+                respones.status(200).json(brand);
                 return;
             }
             catch (error) {

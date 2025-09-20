@@ -9,13 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Category = void 0;
+exports.categoryClass = exports.Category = void 0;
 const index_1 = require("../../generated/prisma/index");
+const redis_middleware_1 = require("../middleware/cashe/redis.middleware");
 const prisma = new index_1.PrismaClient();
 class Category {
     getCategories(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { search, orderBy } = request.query;
+            const { search = "", orderBy } = request.query;
             try {
                 if (search || orderBy) {
                     const category = yield prisma.category.findMany({
@@ -43,11 +44,18 @@ class Category {
                                 },
                             ],
                         },
+                        include: { products: true },
                     });
+                    // set data to redis cache
+                    redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, category);
                     respones.status(200).json(category);
                     return;
                 }
-                const category = yield prisma.category.findMany();
+                const category = yield prisma.category.findMany({
+                    include: { products: true },
+                });
+                // set data to redis cache
+                redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, category);
                 respones.status(200).json(category);
                 return;
             }
@@ -71,6 +79,8 @@ class Category {
                         id,
                     },
                 });
+                // set data to redis cache
+                redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, category);
                 respones.status(200).json(category);
                 return;
             }
@@ -124,3 +134,4 @@ class Category {
     }
 }
 exports.Category = Category;
+exports.categoryClass = new Category();
