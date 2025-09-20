@@ -28,3 +28,8 @@
     "https://example.com/images/product1_side.jpg"
   ]
 }
+{
+    "name":"ahmad",
+    "email":"ahmad9@test.com",
+    "password":"ahmad12345"
+}

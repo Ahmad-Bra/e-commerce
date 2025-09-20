@@ -1,12 +1,15 @@
+// @ts-nocheck
 import express from "express";
 import { Brands } from "../controlers/brands";
+import { isUserAuthorized } from "../middleware/auth/authentication";
+import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
 export const router = express.Router();
 const brandsClass = new Brands();
 
-router.get("/brands", brandsClass.getBrands);
+router.get("/brands", redisCacheMiddleware.getCache, brandsClass.getBrands);
 
-router.get("/brands/:id", brandsClass.getBrand);
+router.get("/brands/:id", redisCacheMiddleware.getCache, brandsClass.getBrand);
 
-router.post("/brands", brandsClass.createBrands);
+router.post("/brands", isUserAuthorized, brandsClass.createBrands);
 
-router.delete("/brands/:id", brandsClass.deleteBrands);
+router.delete("/brands/:id", isUserAuthorized, brandsClass.deleteBrands);

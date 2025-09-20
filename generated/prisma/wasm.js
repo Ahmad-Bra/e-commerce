@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.8.1
- * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
+ * Prisma Client JS version: 6.9.0
+ * Query Engine version: 81e4af48011447c3cc503a190e86995b66d2a28e
  */
 Prisma.prismaVersion = {
-  client: "6.8.1",
-  engine: "2060c79ba17c6bb9f5823312b6f6b7f4a845738e"
+  client: "6.9.0",
+  engine: "81e4af48011447c3cc503a190e86995b66d2a28e"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -113,21 +113,42 @@ Prisma.NullTypes = {
  * Enums
  */
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  password: 'password',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.ProductsScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
   slug: 'slug',
   price: 'price',
+  currency: 'currency',
   discount: 'discount',
   in_stock: 'in_stock',
-  quantity: 'quantity',
   rating: 'rating',
   brandId: 'brandId',
   categoryId: 'categoryId',
   images: 'images',
   created_at: 'created_at',
   updated_at: 'updated_at'
+};
+
+exports.Prisma.CartScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId'
+};
+
+exports.Prisma.CartItemScalarFieldEnum = {
+  id: 'id',
+  cartId: 'cartId',
+  productId: 'productId',
+  quantity: 'quantity'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
@@ -154,14 +175,25 @@ exports.Prisma.CommentsScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   author_id: 'author_id',
-  product_id: 'product_id'
+  product_id: 'product_id',
+  cartId: 'cartId'
 };
 
-exports.Prisma.UserScalarFieldEnum = {
+exports.Prisma.WishlistScalarFieldEnum = {
   id: 'id',
-  email: 'email',
-  name: 'name',
-  password: 'password'
+  userId: 'userId'
+};
+
+exports.Prisma.WishlistItemScalarFieldEnum = {
+  id: 'id',
+  wishlistId: 'wishlistId',
+  productId: 'productId'
+};
+
+exports.Prisma.GoogleScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  googleID: 'googleID'
 };
 
 exports.Prisma.SortOrder = {
@@ -176,11 +208,16 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
+  User: 'User',
   Products: 'Products',
+  Cart: 'Cart',
+  CartItem: 'CartItem',
   Category: 'Category',
   Brand: 'Brand',
   Comments: 'Comments',
-  User: 'User'
+  Wishlist: 'Wishlist',
+  WishlistItem: 'WishlistItem',
+  Google: 'Google'
 };
 
 /**

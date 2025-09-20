@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "../../generated/prisma/index";
+import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
 const prisma = new PrismaClient();
 export class Products {
   public async getProducts(request: Request, respones: Response) {
-    const { search, orderBy } = request.query;
+    const { search = "", orderBy } = request.query;
     try {
       if (search || orderBy) {
         const products = await prisma.products.findMany({
@@ -31,22 +32,40 @@ export class Products {
               },
             ],
           },
+
           include: {
             category: true,
             brand: true,
             comments: true,
           },
         });
+
+        // set data to redis cache
+        redisCacheMiddleware.setCache(request.originalUrl, products);
+
         respones.status(200).json(products);
         return;
       }
+
       const products = await prisma.products.findMany({
+        orderBy: [
+          {
+            name: "asc",
+          },
+          {
+            id: "asc",
+          },
+        ],
         include: {
           category: true,
           brand: true,
           comments: true,
         },
       });
+
+      // set data to redis cache
+      redisCacheMiddleware.setCache(request.originalUrl, products);
+
       respones.status(200).json(products);
       return;
     } catch (error) {
@@ -68,6 +87,10 @@ export class Products {
           id,
         },
       });
+
+      // set data to redis cache
+      redisCacheMiddleware.setCache(request.originalUrl, product);
+
       respones.status(200).json(product);
       return;
     } catch (error) {
