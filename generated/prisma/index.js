@@ -35,12 +35,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.9.0
- * Query Engine version: 81e4af48011447c3cc503a190e86995b66d2a28e
+ * Prisma Client JS version: 6.16.2
+ * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.9.0",
-  engine: "81e4af48011447c3cc503a190e86995b66d2a28e"
+  client: "6.16.2",
+  engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -203,7 +203,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\web Projects\\backendProjects\\store\\generated\\prisma",
+      "value": "D:\\web Projects\\backendProjects\\e-commerce\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -214,10 +214,14 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-1.1.x"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\web Projects\\backendProjects\\store\\prisma\\schema.prisma",
+    "sourceFilePath": "D:\\web Projects\\backendProjects\\e-commerce\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -225,12 +229,13 @@ const config = {
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
-  "clientVersion": "6.9.0",
-  "engineVersion": "81e4af48011447c3cc503a190e86995b66d2a28e",
+  "clientVersion": "6.16.2",
+  "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "mongodb",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -239,8 +244,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email      String     @unique\n  name       String\n  password   String\n  created_at DateTime   @default(now())\n  updated_at DateTime   @default(now())\n  comments   Comments[]\n  // wishlistsIds String[]   @db.ObjectId\n  wishlists  Wishlist?\n  cart       Cart?\n}\n\nmodel Products {\n  id           String         @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name         String\n  description  String\n  slug         String\n  price        Float\n  currency     String\n  discount     Float\n  info         Info\n  cpu_info     Cpu_Info\n  in_stock     Int            @default(0)\n  rating       Float\n  comments     Comments[]\n  brand        Brand          @relation(fields: [brandId], references: [id])\n  category     Category       @relation(fields: [categoryId], references: [id])\n  brandId      String         @db.ObjectId\n  categoryId   String         @db.ObjectId\n  images       String[]\n  created_at   DateTime       @default(now())\n  updated_at   DateTime       @default(now())\n  CartItem     CartItem[]\n  WishlistItem WishlistItem[]\n}\n\nmodel Cart {\n  id     String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  user   User       @relation(fields: [userId], references: [id])\n  userId String     @unique @db.ObjectId\n  items  CartItem[]\n}\n\nmodel CartItem {\n  id        String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  cart      Cart     @relation(fields: [cartId], references: [id])\n  cartId    String   @db.ObjectId\n  product   Products @relation(fields: [productId], references: [id])\n  productId String   @db.ObjectId\n  quantity  Int\n}\n\nmodel Category {\n  id          String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name        String\n  description String\n  created_at  DateTime   @default(now())\n  updated_at  DateTime   @default(now())\n  products    Products[]\n}\n\nmodel Brand {\n  id          String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name        String\n  description String\n  created_at  DateTime   @default(now())\n  updated_at  DateTime   @default(now())\n  products    Products[]\n}\n\nmodel Comments {\n  id          String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  title       String\n  description String\n  rating      Float\n  created_at  DateTime  @default(now())\n  updated_at  DateTime  @default(now())\n  author      User      @relation(fields: [author_id], references: [id])\n  author_id   String    @db.ObjectId\n  product     Products? @relation(fields: [product_id], references: [id])\n  product_id  String    @db.ObjectId\n  cartId      String?   @db.ObjectId\n}\n\nmodel Wishlist {\n  id     String         @id @default(auto()) @map(\"_id\") @db.ObjectId\n  user   User           @relation(fields: [userId], references: [id])\n  userId String         @unique @db.ObjectId\n  items  WishlistItem[]\n}\n\nmodel WishlistItem {\n  id         String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  wishlist   Wishlist @relation(fields: [wishlistId], references: [id])\n  wishlistId String   @db.ObjectId\n  product    Products @relation(fields: [productId], references: [id])\n  productId  String   @db.ObjectId\n}\n\nmodel Google {\n  id       String @id @default(auto()) @map(\"_id\") @db.ObjectId\n  username String\n  googleID String @unique\n}\n\ntype Info {\n  weight String\n  color  String\n}\n\ntype Cpu_Info {\n  model   String\n  cores   Int\n  threads Int\n}\n",
-  "inlineSchemaHash": "e985af7411b0bfe65553f626d2d4c790514fd80b1ba91350e5bcaabb80de0174",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/prisma\"\n  binaryTargets = [\"native\", \"debian-openssl-1.1.x\"]\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email      String     @unique\n  name       String\n  password   String\n  created_at DateTime   @default(now())\n  updated_at DateTime   @default(now())\n  comments   Comments[]\n  wishlists  Wishlist?\n  cart       Cart?\n}\n\nmodel Products {\n  id           String         @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name         String\n  description  String\n  slug         String\n  price        Float\n  currency     String\n  discount     Float\n  info         Info\n  cpu_info     Cpu_Info\n  in_stock     Int            @default(0)\n  rating       Float\n  comments     Comments[]\n  brand        Brand          @relation(fields: [brandId], references: [id])\n  category     Category       @relation(fields: [categoryId], references: [id])\n  brandId      String         @db.ObjectId\n  categoryId   String         @db.ObjectId\n  images       String[]\n  created_at   DateTime       @default(now())\n  updated_at   DateTime       @default(now())\n  CartItem     CartItem[]\n  WishlistItem WishlistItem[]\n}\n\nmodel Cart {\n  id     String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  user   User       @relation(fields: [userId], references: [id])\n  userId String     @unique @db.ObjectId\n  items  CartItem[]\n}\n\nmodel CartItem {\n  id        String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  cart      Cart     @relation(fields: [cartId], references: [id])\n  cartId    String   @db.ObjectId\n  product   Products @relation(fields: [productId], references: [id])\n  productId String   @db.ObjectId\n  quantity  Int\n}\n\nmodel Category {\n  id          String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name        String\n  description String\n  created_at  DateTime   @default(now())\n  updated_at  DateTime   @default(now())\n  products    Products[]\n}\n\nmodel Brand {\n  id          String     @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name        String\n  description String\n  created_at  DateTime   @default(now())\n  updated_at  DateTime   @default(now())\n  products    Products[]\n}\n\nmodel Comments {\n  id          String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  title       String\n  description String\n  rating      Float\n  created_at  DateTime  @default(now())\n  updated_at  DateTime  @default(now())\n  author      User      @relation(fields: [author_id], references: [id])\n  author_id   String    @db.ObjectId\n  product     Products? @relation(fields: [product_id], references: [id])\n  product_id  String    @db.ObjectId\n  cartId      String?   @db.ObjectId\n}\n\nmodel Wishlist {\n  id     String         @id @default(auto()) @map(\"_id\") @db.ObjectId\n  user   User           @relation(fields: [userId], references: [id])\n  userId String         @unique @db.ObjectId\n  items  WishlistItem[]\n}\n\nmodel WishlistItem {\n  id         String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  wishlist   Wishlist @relation(fields: [wishlistId], references: [id])\n  wishlistId String   @db.ObjectId\n  product    Products @relation(fields: [productId], references: [id])\n  productId  String   @db.ObjectId\n}\n\nmodel Google {\n  id       String @id @default(auto()) @map(\"_id\") @db.ObjectId\n  username String\n  googleID String @unique\n}\n\ntype Info {\n  weight String\n  color  String\n}\n\ntype Cpu_Info {\n  model   String\n  cores   Int\n  threads Int\n}\n",
+  "inlineSchemaHash": "6618c2318c68e2a7ae20c884c99632785369272c43c47d58338778a2ccdd49b6",
   "copyEngine": true
 }
 
@@ -281,6 +286,10 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "query_engine-windows.dll.node");
 path.join(process.cwd(), "generated/prisma/query_engine-windows.dll.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-debian-openssl-1.1.x.so.node");
+path.join(process.cwd(), "generated/prisma/libquery_engine-debian-openssl-1.1.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "generated/prisma/schema.prisma")

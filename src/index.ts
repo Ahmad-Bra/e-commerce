@@ -13,10 +13,8 @@ import { router as wishlistRoutes } from "./routes/wishlist.route";
 import { isUserAuthorized } from "./middleware/auth/authentication";
 
 const app = express();
-
 dotenv.config();
 const PORT = process.env.PORT || 3000;
-
 app.use(cookieParser());
 app.use(
   sesstion({
