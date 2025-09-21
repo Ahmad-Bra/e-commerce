@@ -26,7 +26,7 @@ class RedisClient {
             return {
                 username,
                 password,
-                socket: { host, port: Number(port) },
+                socket: { host, port: Number(port), connectTimeout: 10000 },
             };
         // default - localhost:6379
         return { socket: { host: "127.0.0.1", port: 6379 } };
