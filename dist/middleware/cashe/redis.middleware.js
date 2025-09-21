@@ -12,12 +12,47 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.redisCacheMiddleware = exports.RedisCacheMiddleware = void 0;
 const redis_1 = require("redis");
 class RedisClient {
-    constructor() { }
-    createRedisClient() {
+    constructor() {
+        // single shared client instance
+        this.client = null;
+    }
+    // build connection options from env
+    getConnectionOptions() {
+        const username = process.env.REDIS_USERNAME;
+        const password = process.env.REDIS_PASSWORD;
+        const host = process.env.REDIS_HOST;
+        const port = process.env.REDIS_PORT;
+        if (host && port)
+            return {
+                username,
+                password,
+                socket: { host, port: Number(port) },
+            };
+        // default - localhost:6379
+        return { socket: { host: "127.0.0.1", port: 6379 } };
+    }
+    getClient() {
         return __awaiter(this, void 0, void 0, function* () {
-            const client = (0, redis_1.createClient)().on("error", (err) => console.log("Redis Client Error", err));
-            yield client.connect(); // connect by defaul to port:  6379
-            return client;
+            if (this.client)
+                return this.client;
+            const options = this.getConnectionOptions();
+            this.client = (0, redis_1.createClient)(options);
+            this.client.on("error", (err) => console.error("Redis Client Error", err));
+            yield this.client.connect();
+            return this.client;
+        });
+    }
+    disconnect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                return;
+            try {
+                yield this.client.disconnect();
+            }
+            catch (err) {
+                console.warn("Redis disconnect error:", err);
+            }
+            this.client = null;
         });
     }
 }
@@ -27,7 +62,7 @@ class RedisCacheMiddleware extends RedisClient {
         this.getCache = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const key = req.originalUrl;
             try {
-                const client = yield this.createRedisClient();
+                const client = yield this.getClient();
                 const cachedData = yield client.get(key);
                 if (cachedData) {
                     return res.status(200).json(JSON.parse(cachedData));
@@ -43,10 +78,8 @@ class RedisCacheMiddleware extends RedisClient {
         return __awaiter(this, void 0, void 0, function* () {
             const key = originalUrl;
             try {
-                const client = yield this.createRedisClient();
-                yield client.set(key, JSON.stringify(data), {
-                    EX: 5 * 60, // 1 min expiration
-                });
+                const client = yield this.getClient();
+                yield client.set(key, JSON.stringify(data), { EX: 10 * 60 });
             }
             catch (err) {
                 console.error("Redis SET error:", err);
