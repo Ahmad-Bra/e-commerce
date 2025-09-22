@@ -47,11 +47,17 @@ export class RedisCacheMiddleware extends RedisClient {
 
   public getCache = async (req: Request, res: Response, next: NextFunction) => {
     const key = req.originalUrl;
+    const { page, limit } = req.query;
     try {
       const client = await this.getClient();
       const cachedData = await client.get(key);
       if (cachedData) {
-        return res.status(200).json(JSON.parse(cachedData));
+        return res.status(200).json({
+          data: JSON.parse(cachedData),
+          page: page ? Number(page) : undefined,
+          limit: limit ? Number(limit) : undefined,
+          total: JSON.parse(cachedData).length,
+        });
       }
     } catch (err) {
       console.error("Redis GET error:", err);

@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "../../generated/prisma/index";
 import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import ErrorsValidation from "../services/ErrorsValidation";
 const prisma = new PrismaClient();
 export class Brands {
   public async getBrands(request: Request, respones: Response) {
-    const { search = "", orderBy } = request.query;
+    const { search = "", orderBy, page, limit } = request.query;
     try {
       if (search || orderBy) {
         const brands = await prisma.brand.findMany({
@@ -32,23 +33,37 @@ export class Brands {
               },
             ],
           },
+          take: limit ? Number(limit) : undefined,
+          skip: page ? (Number(page) - 1) * Number(limit) : undefined,
           include: { products: true },
         });
 
         // set data to redis cache
         redisCacheMiddleware.setCache(request.originalUrl, brands);
 
-        respones.status(200).json(brands);
+        respones.status(200).json({
+          data: brands,
+          page: page ? Number(page) : undefined,
+          limit: limit ? Number(limit) : undefined,
+          total: brands.length,
+        });
         return;
       }
       const brands = await prisma.brand.findMany({
+        take: limit ? Number(limit) : undefined,
+        skip: page ? (Number(page) - 1) * Number(limit) : undefined,
         include: { products: true },
       });
 
       // set data to redis cache
       redisCacheMiddleware.setCache(request.originalUrl, brands);
 
-      respones.status(200).json(brands);
+      respones.status(200).json({
+        data: brands,
+        page: page ? Number(page) : undefined,
+        limit: limit ? Number(limit) : undefined,
+        total: brands.length,
+      });
       return;
     } catch (error) {
       console.log(error);
@@ -81,6 +96,8 @@ export class Brands {
     }
   }
   public async createBrands(request: Request, respones: Response) {
+    new ErrorsValidation(request, respones).errorChecker();
+
     const body = request.body;
 
     try {

@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "../../generated/prisma/index";
 import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import ErrorsValidation from "../services/ErrorsValidation";
 const prisma = new PrismaClient();
 export class Category {
   public async getCategories(request: Request, respones: Response) {
-    const { search = "", orderBy } = request.query;
+    const { search = "", orderBy, page, limit } = request.query;
     try {
       if (search || orderBy) {
         const category = await prisma.category.findMany({
@@ -32,23 +33,37 @@ export class Category {
               },
             ],
           },
+          take: limit ? Number(limit) : undefined,
+          skip: page ? (Number(page) - 1) * Number(limit) : undefined,
           include: { products: true },
         });
 
         // set data to redis cache
         redisCacheMiddleware.setCache(request.originalUrl, category);
 
-        respones.status(200).json(category);
+        respones.status(200).json({
+          data: category,
+          page: page ? Number(page) : undefined,
+          limit: limit ? Number(limit) : undefined,
+          total: category.length,
+        });
         return;
       }
       const category = await prisma.category.findMany({
+        take: limit ? Number(limit) : undefined,
+        skip: page ? (Number(page) - 1) * Number(limit) : undefined,
         include: { products: true },
       });
 
       // set data to redis cache
       redisCacheMiddleware.setCache(request.originalUrl, category);
 
-      respones.status(200).json(category);
+      respones.status(200).json({
+        data: category,
+        page: page ? Number(page) : undefined,
+        limit: limit ? Number(limit) : undefined,
+        total: category.length,
+      });
       return;
     } catch (error) {
       console.log(error);
@@ -82,6 +97,8 @@ export class Category {
     }
   }
   public async createCategory(request: Request, respones: Response) {
+    new ErrorsValidation(request, respones).errorChecker();
+
     const body = request.body;
 
     try {

@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import sesstion from "express-session";
 import MongoStore from "connect-mongo";
+import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
 import { router as ProductRoutes } from "./routes/products.route";
 import { router as categoriesRoutes } from "./routes/categories.route";
 import { router as cartRoutes } from "./routes/cart.route";
@@ -13,8 +15,22 @@ import { router as wishlistRoutes } from "./routes/wishlist.route";
 import { isUserAuthorized } from "./middleware/auth/authentication";
 
 const app = express();
-dotenv.config();
 const PORT = process.env.PORT || 3000;
+dotenv.config();
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: "draft-8", // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+  ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
+  // store: ... , // Redis, Memcached, etc. See below.
+});
+
+// Apply the rate limiting middleware to all requests.
+app.use(limiter);
+
 app.use(cookieParser());
 app.use(
   sesstion({
@@ -33,9 +49,11 @@ app.use(
 );
 
 app.use(express.json());
-/* @ts-ignore */
+
 app.get("/", (request: Request, respones: Response) => {
-  respones.send("hi");
+  console.log(request.path);
+
+  respones.send("Hello from e-commerce api");
   return;
 });
 

@@ -8,15 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.categoryClass = exports.Category = void 0;
 const index_1 = require("../../generated/prisma/index");
 const redis_middleware_1 = require("../middleware/cashe/redis.middleware");
+const ErrorsValidation_1 = __importDefault(require("../services/ErrorsValidation"));
 const prisma = new index_1.PrismaClient();
 class Category {
     getCategories(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { search = "", orderBy } = request.query;
+            const { search = "", orderBy, page, limit } = request.query;
             try {
                 if (search || orderBy) {
                     const category = yield prisma.category.findMany({
@@ -44,19 +48,33 @@ class Category {
                                 },
                             ],
                         },
+                        take: limit ? Number(limit) : undefined,
+                        skip: page ? (Number(page) - 1) * Number(limit) : undefined,
                         include: { products: true },
                     });
                     // set data to redis cache
                     redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, category);
-                    respones.status(200).json(category);
+                    respones.status(200).json({
+                        data: category,
+                        page: page ? Number(page) : undefined,
+                        limit: limit ? Number(limit) : undefined,
+                        total: category.length,
+                    });
                     return;
                 }
                 const category = yield prisma.category.findMany({
+                    take: limit ? Number(limit) : undefined,
+                    skip: page ? (Number(page) - 1) * Number(limit) : undefined,
                     include: { products: true },
                 });
                 // set data to redis cache
                 redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, category);
-                respones.status(200).json(category);
+                respones.status(200).json({
+                    data: category,
+                    page: page ? Number(page) : undefined,
+                    limit: limit ? Number(limit) : undefined,
+                    total: category.length,
+                });
                 return;
             }
             catch (error) {
@@ -93,6 +111,7 @@ class Category {
     }
     createCategory(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
+            new ErrorsValidation_1.default(request, respones).errorChecker();
             const body = request.body;
             try {
                 const createdCategory = yield prisma.category.create({

@@ -3,24 +3,24 @@ import express from "express";
 // @ts-ignore
 import passport from "passport";
 import { checkSchema } from "express-validator";
-import { userVlidation } from "../../utils/authValidation";
 
 import "../../stratgies/google";
 import "../../stratgies/auth/local.login";
 
 import { User } from "../../controlers/auth/authentication";
+import { userRules } from "../../middleware/api/validation";
 const app = express();
 const userClass = new User();
 export const router = express.Router();
 
 router.post(
   "/auth/login",
-  checkSchema(userVlidation),
+  checkSchema(userRules),
   //  @ts-ignore
   userClass.login
 );
 //  @ts-ignore
-router.post("/auth/register", checkSchema(userVlidation), userClass.signUp);
+router.post("/auth/register", checkSchema(userRules), userClass.signUp);
 
 router.get(
   "/oauth/google/redirect",
