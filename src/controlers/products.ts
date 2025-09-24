@@ -92,10 +92,17 @@ export class Products {
     }
   }
   public async getProducts(request: Request, respones: Response) {
-    const { search = "", orderBy, page, limit } = request.query;
+    const {
+      search = "",
+      orderBy,
+      page,
+      limit,
+      byCategory,
+      byBrand,
+    } = request.query;
 
     try {
-      if (search || orderBy) {
+      if (search || orderBy || byCategory || byBrand) {
         const [total, products] = await Promise.all([
           prisma.products.count(),
           prisma.products.findMany({
@@ -108,6 +115,10 @@ export class Products {
               },
             ],
             where: {
+              categoryId: (byCategory as string)
+                ? (byCategory as string)
+                : undefined,
+              brandId: (byBrand as string) ? (byBrand as string) : undefined,
               OR: [
                 {
                   description: {
@@ -140,7 +151,11 @@ export class Products {
           data: products,
           page: page ? Number(page) : undefined,
           nextPage:
-            total > Number(page) * Number(limit) ? Number(page) + 1 : null,
+            total > Number(page) * Number(limit)
+              ? Number(page) + 1
+              : page
+              ? null
+              : undefined,
           limit: limit ? Number(limit) : undefined,
           total: products.length,
         });

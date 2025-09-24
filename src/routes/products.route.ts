@@ -15,7 +15,7 @@ router.get(
 );
 
 // Seed endpoint must come before the param route to avoid matching ':id' = 'seed'
-// router.post("/products/seed", productClass.seedProducts);
+router.post("/products/seed", productClass.seedProducts);
 
 router.get(
   "/products/:id",

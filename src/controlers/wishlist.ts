@@ -48,7 +48,7 @@ export class Wishlist {
 
       respones
         .status(200)
-        .json({ message: "product added to wishlist successfully" });
+        .json({ message: "Product added to wishlist successfully" });
       return;
     } catch (error) {
       console.log(error);

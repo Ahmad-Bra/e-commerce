@@ -29,7 +29,7 @@
   ]
 }
 {
-    "name":"ahmad",
-    "email":"ahmad9@test.com",
-    "password":"ahmad12345"
+    "name":"ahmad brazy",
+    "email":"ahmadbrazy20@gmail.com",
+    "password":"ahmadbrazy123"
 }

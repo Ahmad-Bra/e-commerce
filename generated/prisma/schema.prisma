@@ -11,39 +11,42 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
-  email      String     @unique
-  name       String
-  password   String
-  created_at DateTime   @default(now())
-  updated_at DateTime   @default(now())
-  comments   Comments[]
-  wishlists  Wishlist?
-  cart       Cart?
+  id                      String     @id @default(uuid()) @db.Uuid
+  email                   String     @unique
+  name                    String
+  password                String
+  is_verified             Boolean    @default(false)
+  verify_token            String?
+  expiration_verify_token DateTime?
+  created_at              DateTime   @default(now())
+  updated_at              DateTime   @default(now())
+  comments                Comments[]
+  wishlists               Wishlist?
+  cart                    Cart?
 }
 
 model Products {
-  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  id           String         @id @default(uuid()) @db.Uuid
   name         String
   description  String
   slug         String
   price        Float
   currency     String
   discount     Float
-  info         Info
-  cpu_info     Cpu_Info
+  info         Json
+  cpu_info     Json
   in_stock     Int            @default(0)
   rating       Float
   comments     Comments[]
   brand        Brand          @relation(fields: [brandId], references: [id])
   category     Category       @relation(fields: [categoryId], references: [id])
-  brandId      String         @db.ObjectId
-  categoryId   String         @db.ObjectId
+  brandId      String         @db.Uuid
+  categoryId   String         @db.Uuid
   images       String[]
   created_at   DateTime       @default(now())
   updated_at   DateTime       @default(now())
@@ -52,23 +55,23 @@ model Products {
 }
 
 model Cart {
-  id     String     @id @default(auto()) @map("_id") @db.ObjectId
+  id     String     @id @default(uuid()) @db.Uuid
   user   User       @relation(fields: [userId], references: [id])
-  userId String     @unique @db.ObjectId
+  userId String     @unique @db.Uuid
   items  CartItem[]
 }
 
 model CartItem {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid()) @db.Uuid
   cart      Cart     @relation(fields: [cartId], references: [id])
-  cartId    String   @db.ObjectId
+  cartId    String   @db.Uuid
   product   Products @relation(fields: [productId], references: [id])
-  productId String   @db.ObjectId
+  productId String   @db.Uuid
   quantity  Int
 }
 
 model Category {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  id          String     @id @default(uuid()) @db.Uuid
   name        String
   description String
   created_at  DateTime   @default(now())
@@ -77,7 +80,7 @@ model Category {
 }
 
 model Brand {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  id          String     @id @default(uuid()) @db.Uuid
   name        String
   description String
   created_at  DateTime   @default(now())
@@ -86,47 +89,36 @@ model Brand {
 }
 
 model Comments {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(uuid()) @db.Uuid
   title       String
   description String
   rating      Float
   created_at  DateTime  @default(now())
   updated_at  DateTime  @default(now())
   author      User      @relation(fields: [author_id], references: [id])
-  author_id   String    @db.ObjectId
+  author_id   String    @db.Uuid
   product     Products? @relation(fields: [product_id], references: [id])
-  product_id  String    @db.ObjectId
-  cartId      String?   @db.ObjectId
+  product_id  String    @db.Uuid
+  cartId      String?   @db.Uuid
 }
 
 model Wishlist {
-  id     String         @id @default(auto()) @map("_id") @db.ObjectId
+  id     String         @id @default(uuid()) @db.Uuid
   user   User           @relation(fields: [userId], references: [id])
-  userId String         @unique @db.ObjectId
+  userId String         @unique @db.Uuid
   items  WishlistItem[]
 }
 
 model WishlistItem {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String   @id @default(uuid()) @db.Uuid
   wishlist   Wishlist @relation(fields: [wishlistId], references: [id])
-  wishlistId String   @db.ObjectId
+  wishlistId String   @db.Uuid
   product    Products @relation(fields: [productId], references: [id])
-  productId  String   @db.ObjectId
+  productId  String   @db.Uuid
 }
 
 model Google {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  id       String @id @default(uuid()) @db.Uuid
   username String
   googleID String @unique
-}
-
-type Info {
-  weight String
-  color  String
-}
-
-type Cpu_Info {
-  model   String
-  cores   Int
-  threads Int
 }

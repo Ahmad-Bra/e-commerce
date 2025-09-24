@@ -14,16 +14,6 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
- * Model Info
- * 
- */
-export type Info = $Result.DefaultSelection<Prisma.$InfoPayload>
-/**
- * Model Cpu_Info
- * 
- */
-export type Cpu_Info = $Result.DefaultSelection<Prisma.$Cpu_InfoPayload>
-/**
  * Model User
  * 
  */
@@ -124,6 +114,53 @@ export class PrismaClient<
   $disconnect(): $Utils.JsPromise<void>;
 
 /**
+   * Executes a prepared raw query and returns the number of affected rows.
+   * @example
+   * ```
+   * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
+   * ```
+   *
+   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   */
+  $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
+
+  /**
+   * Executes a raw query and returns the number of affected rows.
+   * Susceptible to SQL injections, see documentation.
+   * @example
+   * ```
+   * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
+   * ```
+   *
+   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   */
+  $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
+
+  /**
+   * Performs a prepared raw query and returns the `SELECT` data.
+   * @example
+   * ```
+   * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
+   * ```
+   *
+   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   */
+  $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
+
+  /**
+   * Performs a raw query and returns the `SELECT` data.
+   * Susceptible to SQL injections, see documentation.
+   * @example
+   * ```
+   * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
+   * ```
+   *
+   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   */
+  $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
+
+
+  /**
    * Allows the running of a sequence of read/write operations that are guaranteed to either succeed or fail as a whole.
    * @example
    * ```
@@ -136,24 +173,10 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P]): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
-  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number }): $Utils.JsPromise<R>
+  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
 
-  /**
-   * Executes a raw MongoDB command and returns the result of it.
-   * @example
-   * ```
-   * const user = await prisma.$runCommandRaw({
-   *   aggregate: 'User',
-   *   pipeline: [{ $match: { name: 'Bob' } }, { $project: { email: true, _id: false } }],
-   *   explain: false,
-   * })
-   * ```
-   * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $runCommandRaw(command: Prisma.InputJsonObject): Prisma.PrismaPromise<Prisma.JsonObject>
 
   $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb<ClientOptions>, ExtArgs, $Utils.Call<Prisma.TypeMapCb<ClientOptions>, {
     extArgs: ExtArgs
@@ -727,7 +750,7 @@ export namespace Prisma {
     }
     meta: {
       modelProps: "user" | "products" | "cart" | "cartItem" | "category" | "brand" | "comments" | "wishlist" | "wishlistItem" | "google"
-      txIsolationLevel: never
+      txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
       User: {
@@ -762,6 +785,10 @@ export namespace Prisma {
             args: Prisma.UserCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.UserCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserPayload>[]
+          }
           delete: {
             args: Prisma.UserDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
@@ -778,6 +805,10 @@ export namespace Prisma {
             args: Prisma.UserUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.UserUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserPayload>[]
+          }
           upsert: {
             args: Prisma.UserUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$UserPayload>
@@ -789,14 +820,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.UserGroupByArgs<ExtArgs>
             result: $Utils.Optional<UserGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.UserFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.UserAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
@@ -836,6 +859,10 @@ export namespace Prisma {
             args: Prisma.ProductsCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.ProductsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductsPayload>[]
+          }
           delete: {
             args: Prisma.ProductsDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ProductsPayload>
@@ -852,6 +879,10 @@ export namespace Prisma {
             args: Prisma.ProductsUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.ProductsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductsPayload>[]
+          }
           upsert: {
             args: Prisma.ProductsUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ProductsPayload>
@@ -863,14 +894,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.ProductsGroupByArgs<ExtArgs>
             result: $Utils.Optional<ProductsGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.ProductsFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.ProductsAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.ProductsCountArgs<ExtArgs>
@@ -910,6 +933,10 @@ export namespace Prisma {
             args: Prisma.CartCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.CartCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CartPayload>[]
+          }
           delete: {
             args: Prisma.CartDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$CartPayload>
@@ -926,6 +953,10 @@ export namespace Prisma {
             args: Prisma.CartUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.CartUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CartPayload>[]
+          }
           upsert: {
             args: Prisma.CartUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$CartPayload>
@@ -937,14 +968,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.CartGroupByArgs<ExtArgs>
             result: $Utils.Optional<CartGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.CartFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.CartAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.CartCountArgs<ExtArgs>
@@ -984,6 +1007,10 @@ export namespace Prisma {
             args: Prisma.CartItemCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.CartItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CartItemPayload>[]
+          }
           delete: {
             args: Prisma.CartItemDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$CartItemPayload>
@@ -1000,6 +1027,10 @@ export namespace Prisma {
             args: Prisma.CartItemUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.CartItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CartItemPayload>[]
+          }
           upsert: {
             args: Prisma.CartItemUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$CartItemPayload>
@@ -1011,14 +1042,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.CartItemGroupByArgs<ExtArgs>
             result: $Utils.Optional<CartItemGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.CartItemFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.CartItemAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.CartItemCountArgs<ExtArgs>
@@ -1058,6 +1081,10 @@ export namespace Prisma {
             args: Prisma.CategoryCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.CategoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
+          }
           delete: {
             args: Prisma.CategoryDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
@@ -1074,6 +1101,10 @@ export namespace Prisma {
             args: Prisma.CategoryUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.CategoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
+          }
           upsert: {
             args: Prisma.CategoryUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
@@ -1085,14 +1116,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.CategoryGroupByArgs<ExtArgs>
             result: $Utils.Optional<CategoryGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.CategoryFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.CategoryAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.CategoryCountArgs<ExtArgs>
@@ -1132,6 +1155,10 @@ export namespace Prisma {
             args: Prisma.BrandCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.BrandCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrandPayload>[]
+          }
           delete: {
             args: Prisma.BrandDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$BrandPayload>
@@ -1148,6 +1175,10 @@ export namespace Prisma {
             args: Prisma.BrandUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.BrandUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrandPayload>[]
+          }
           upsert: {
             args: Prisma.BrandUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$BrandPayload>
@@ -1159,14 +1190,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.BrandGroupByArgs<ExtArgs>
             result: $Utils.Optional<BrandGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.BrandFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.BrandAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.BrandCountArgs<ExtArgs>
@@ -1206,6 +1229,10 @@ export namespace Prisma {
             args: Prisma.CommentsCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.CommentsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentsPayload>[]
+          }
           delete: {
             args: Prisma.CommentsDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$CommentsPayload>
@@ -1222,6 +1249,10 @@ export namespace Prisma {
             args: Prisma.CommentsUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.CommentsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentsPayload>[]
+          }
           upsert: {
             args: Prisma.CommentsUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$CommentsPayload>
@@ -1233,14 +1264,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.CommentsGroupByArgs<ExtArgs>
             result: $Utils.Optional<CommentsGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.CommentsFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.CommentsAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.CommentsCountArgs<ExtArgs>
@@ -1280,6 +1303,10 @@ export namespace Prisma {
             args: Prisma.WishlistCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.WishlistCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WishlistPayload>[]
+          }
           delete: {
             args: Prisma.WishlistDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$WishlistPayload>
@@ -1296,6 +1323,10 @@ export namespace Prisma {
             args: Prisma.WishlistUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.WishlistUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WishlistPayload>[]
+          }
           upsert: {
             args: Prisma.WishlistUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$WishlistPayload>
@@ -1307,14 +1338,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.WishlistGroupByArgs<ExtArgs>
             result: $Utils.Optional<WishlistGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.WishlistFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.WishlistAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.WishlistCountArgs<ExtArgs>
@@ -1354,6 +1377,10 @@ export namespace Prisma {
             args: Prisma.WishlistItemCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.WishlistItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WishlistItemPayload>[]
+          }
           delete: {
             args: Prisma.WishlistItemDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$WishlistItemPayload>
@@ -1370,6 +1397,10 @@ export namespace Prisma {
             args: Prisma.WishlistItemUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.WishlistItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WishlistItemPayload>[]
+          }
           upsert: {
             args: Prisma.WishlistItemUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$WishlistItemPayload>
@@ -1381,14 +1412,6 @@ export namespace Prisma {
           groupBy: {
             args: Prisma.WishlistItemGroupByArgs<ExtArgs>
             result: $Utils.Optional<WishlistItemGroupByOutputType>[]
-          }
-          findRaw: {
-            args: Prisma.WishlistItemFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.WishlistItemAggregateRawArgs<ExtArgs>
-            result: JsonObject
           }
           count: {
             args: Prisma.WishlistItemCountArgs<ExtArgs>
@@ -1428,6 +1451,10 @@ export namespace Prisma {
             args: Prisma.GoogleCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          createManyAndReturn: {
+            args: Prisma.GoogleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePayload>[]
+          }
           delete: {
             args: Prisma.GoogleDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GooglePayload>
@@ -1444,6 +1471,10 @@ export namespace Prisma {
             args: Prisma.GoogleUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
+          updateManyAndReturn: {
+            args: Prisma.GoogleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GooglePayload>[]
+          }
           upsert: {
             args: Prisma.GoogleUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$GooglePayload>
@@ -1456,14 +1487,6 @@ export namespace Prisma {
             args: Prisma.GoogleGroupByArgs<ExtArgs>
             result: $Utils.Optional<GoogleGroupByOutputType>[]
           }
-          findRaw: {
-            args: Prisma.GoogleFindRawArgs<ExtArgs>
-            result: JsonObject
-          }
-          aggregateRaw: {
-            args: Prisma.GoogleAggregateRawArgs<ExtArgs>
-            result: JsonObject
-          }
           count: {
             args: Prisma.GoogleCountArgs<ExtArgs>
             result: $Utils.Optional<GoogleCountAggregateOutputType> | number
@@ -1475,9 +1498,21 @@ export namespace Prisma {
     other: {
       payload: any
       operations: {
-        $runCommandRaw: {
-          args: Prisma.InputJsonObject,
-          result: Prisma.JsonObject
+        $executeRaw: {
+          args: [query: TemplateStringsArray | Prisma.Sql, ...values: any[]],
+          result: any
+        }
+        $executeRawUnsafe: {
+          args: [query: string, ...values: any[]],
+          result: any
+        }
+        $queryRaw: {
+          args: [query: TemplateStringsArray | Prisma.Sql, ...values: any[]],
+          result: any
+        }
+        $queryRawUnsafe: {
+          args: [query: string, ...values: any[]],
+          result: any
         }
       }
     }
@@ -1531,7 +1566,12 @@ export namespace Prisma {
     transactionOptions?: {
       maxWait?: number
       timeout?: number
+      isolationLevel?: Prisma.TransactionIsolationLevel
     }
+    /**
+     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale`
+     */
+    adapter?: runtime.SqlDriverAdapterFactory | null
     /**
      * Global configuration for omitting model fields by default.
      * 
@@ -1843,136 +1883,6 @@ export namespace Prisma {
    */
 
   /**
-   * Model Info
-   */
-
-
-
-
-
-  export type InfoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    weight?: boolean
-    color?: boolean
-  }, ExtArgs["result"]["info"]>
-
-
-
-  export type InfoSelectScalar = {
-    weight?: boolean
-    color?: boolean
-  }
-
-  export type InfoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"weight" | "color", ExtArgs["result"]["info"]>
-
-  export type $InfoPayload = {
-    name: "Info"
-    objects: {}
-    scalars: {
-      weight: string
-      color: string
-    }
-    composites: {}
-  }
-
-  type InfoGetPayload<S extends boolean | null | undefined | InfoDefaultArgs> = $Result.GetResult<Prisma.$InfoPayload, S>
-
-
-
-
-
-  /**
-   * Fields of the Info model
-   */
-  interface InfoFieldRefs {
-    readonly weight: FieldRef<"Info", 'String'>
-    readonly color: FieldRef<"Info", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Info without action
-   */
-  export type InfoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Info
-     */
-    select?: InfoSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Info
-     */
-    omit?: InfoOmit<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Cpu_Info
-   */
-
-
-
-
-
-  export type Cpu_InfoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    model?: boolean
-    cores?: boolean
-    threads?: boolean
-  }, ExtArgs["result"]["cpu_Info"]>
-
-
-
-  export type Cpu_InfoSelectScalar = {
-    model?: boolean
-    cores?: boolean
-    threads?: boolean
-  }
-
-  export type Cpu_InfoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"model" | "cores" | "threads", ExtArgs["result"]["cpu_Info"]>
-
-  export type $Cpu_InfoPayload = {
-    name: "Cpu_Info"
-    objects: {}
-    scalars: {
-      model: string
-      cores: number
-      threads: number
-    }
-    composites: {}
-  }
-
-  type Cpu_InfoGetPayload<S extends boolean | null | undefined | Cpu_InfoDefaultArgs> = $Result.GetResult<Prisma.$Cpu_InfoPayload, S>
-
-
-
-
-
-  /**
-   * Fields of the Cpu_Info model
-   */
-  interface Cpu_InfoFieldRefs {
-    readonly model: FieldRef<"Cpu_Info", 'String'>
-    readonly cores: FieldRef<"Cpu_Info", 'Int'>
-    readonly threads: FieldRef<"Cpu_Info", 'Int'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Cpu_Info without action
-   */
-  export type Cpu_InfoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Cpu_Info
-     */
-    select?: Cpu_InfoSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Cpu_Info
-     */
-    omit?: Cpu_InfoOmit<ExtArgs> | null
-  }
-
-
-  /**
    * Model User
    */
 
@@ -1987,6 +1897,9 @@ export namespace Prisma {
     email: string | null
     name: string | null
     password: string | null
+    is_verified: boolean | null
+    verify_token: string | null
+    expiration_verify_token: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -1996,6 +1909,9 @@ export namespace Prisma {
     email: string | null
     name: string | null
     password: string | null
+    is_verified: boolean | null
+    verify_token: string | null
+    expiration_verify_token: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -2005,6 +1921,9 @@ export namespace Prisma {
     email: number
     name: number
     password: number
+    is_verified: number
+    verify_token: number
+    expiration_verify_token: number
     created_at: number
     updated_at: number
     _all: number
@@ -2016,6 +1935,9 @@ export namespace Prisma {
     email?: true
     name?: true
     password?: true
+    is_verified?: true
+    verify_token?: true
+    expiration_verify_token?: true
     created_at?: true
     updated_at?: true
   }
@@ -2025,6 +1947,9 @@ export namespace Prisma {
     email?: true
     name?: true
     password?: true
+    is_verified?: true
+    verify_token?: true
+    expiration_verify_token?: true
     created_at?: true
     updated_at?: true
   }
@@ -2034,6 +1959,9 @@ export namespace Prisma {
     email?: true
     name?: true
     password?: true
+    is_verified?: true
+    verify_token?: true
+    expiration_verify_token?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -2116,6 +2044,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified: boolean
+    verify_token: string | null
+    expiration_verify_token: Date | null
     created_at: Date
     updated_at: Date
     _count: UserCountAggregateOutputType | null
@@ -2142,6 +2073,9 @@ export namespace Prisma {
     email?: boolean
     name?: boolean
     password?: boolean
+    is_verified?: boolean
+    verify_token?: boolean
+    expiration_verify_token?: boolean
     created_at?: boolean
     updated_at?: boolean
     comments?: boolean | User$commentsArgs<ExtArgs>
@@ -2150,24 +2084,51 @@ export namespace Prisma {
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
+  export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    name?: boolean
+    password?: boolean
+    is_verified?: boolean
+    verify_token?: boolean
+    expiration_verify_token?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["user"]>
 
+  export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    name?: boolean
+    password?: boolean
+    is_verified?: boolean
+    verify_token?: boolean
+    expiration_verify_token?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
     email?: boolean
     name?: boolean
     password?: boolean
+    is_verified?: boolean
+    verify_token?: boolean
+    expiration_verify_token?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "password" | "created_at" | "updated_at", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "password" | "is_verified" | "verify_token" | "expiration_verify_token" | "created_at" | "updated_at", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     comments?: boolean | User$commentsArgs<ExtArgs>
     wishlists?: boolean | User$wishlistsArgs<ExtArgs>
     cart?: boolean | User$cartArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
+  export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
@@ -2181,6 +2142,9 @@ export namespace Prisma {
       email: string
       name: string
       password: string
+      is_verified: boolean
+      verify_token: string | null
+      expiration_verify_token: Date | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["user"]>
@@ -2301,6 +2265,30 @@ export namespace Prisma {
     createMany<T extends UserCreateManyArgs>(args?: SelectSubset<T, UserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many Users and returns the data saved in the database.
+     * @param {UserCreateManyAndReturnArgs} args - Arguments to create many Users.
+     * @example
+     * // Create many Users
+     * const user = await prisma.user.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Users and only return the `id`
+     * const userWithIdOnly = await prisma.user.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UserCreateManyAndReturnArgs>(args?: SelectSubset<T, UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a User.
      * @param {UserDeleteArgs} args - Arguments to delete one User.
      * @example
@@ -2365,6 +2353,36 @@ export namespace Prisma {
     updateMany<T extends UserUpdateManyArgs>(args: SelectSubset<T, UserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Users and returns the data updated in the database.
+     * @param {UserUpdateManyAndReturnArgs} args - Arguments to update many Users.
+     * @example
+     * // Update many Users
+     * const user = await prisma.user.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Users and only return the `id`
+     * const userWithIdOnly = await prisma.user.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserUpdateManyAndReturnArgs>(args: SelectSubset<T, UserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one User.
      * @param {UserUpsertArgs} args - Arguments to update or create a User.
      * @example
@@ -2382,29 +2400,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Users that matches the filter.
-     * @param {UserFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const user = await prisma.user.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: UserFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a User.
-     * @param {UserAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const user = await prisma.user.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: UserAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -2582,6 +2577,9 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
+    readonly is_verified: FieldRef<"User", 'Boolean'>
+    readonly verify_token: FieldRef<"User", 'String'>
+    readonly expiration_verify_token: FieldRef<"User", 'DateTime'>
     readonly created_at: FieldRef<"User", 'DateTime'>
     readonly updated_at: FieldRef<"User", 'DateTime'>
   }
@@ -2813,6 +2811,26 @@ export namespace Prisma {
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * User createManyAndReturn
+   */
+  export type UserCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * The data used to create many Users.
+     */
+    data: UserCreateManyInput | UserCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -2845,6 +2863,32 @@ export namespace Prisma {
    * User updateMany
    */
   export type UserUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Users.
+     */
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyInput>
+    /**
+     * Filter which Users to update
+     */
+    where?: UserWhereInput
+    /**
+     * Limit how many Users to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * User updateManyAndReturn
+   */
+  export type UserUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * The data used to update Users.
      */
@@ -2923,34 +2967,6 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
-  }
-
-  /**
-   * User findRaw
-   */
-  export type UserFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * User aggregateRaw
-   */
-  export type UserAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -3100,6 +3116,8 @@ export namespace Prisma {
     price: number
     currency: number
     discount: number
+    info: number
+    cpu_info: number
     in_stock: number
     rating: number
     brandId: number
@@ -3165,6 +3183,8 @@ export namespace Prisma {
     price?: true
     currency?: true
     discount?: true
+    info?: true
+    cpu_info?: true
     in_stock?: true
     rating?: true
     brandId?: true
@@ -3269,6 +3289,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
+    info: JsonValue
+    cpu_info: JsonValue
     in_stock: number
     rating: number
     brandId: string
@@ -3305,8 +3327,8 @@ export namespace Prisma {
     price?: boolean
     currency?: boolean
     discount?: boolean
-    info?: boolean | InfoDefaultArgs<ExtArgs>
-    cpu_info?: boolean | Cpu_InfoDefaultArgs<ExtArgs>
+    info?: boolean
+    cpu_info?: boolean
     in_stock?: boolean
     rating?: boolean
     brandId?: boolean
@@ -3322,7 +3344,47 @@ export namespace Prisma {
     _count?: boolean | ProductsCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["products"]>
 
+  export type ProductsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    slug?: boolean
+    price?: boolean
+    currency?: boolean
+    discount?: boolean
+    info?: boolean
+    cpu_info?: boolean
+    in_stock?: boolean
+    rating?: boolean
+    brandId?: boolean
+    categoryId?: boolean
+    images?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    brand?: boolean | BrandDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["products"]>
 
+  export type ProductsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    slug?: boolean
+    price?: boolean
+    currency?: boolean
+    discount?: boolean
+    info?: boolean
+    cpu_info?: boolean
+    in_stock?: boolean
+    rating?: boolean
+    brandId?: boolean
+    categoryId?: boolean
+    images?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    brand?: boolean | BrandDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["products"]>
 
   export type ProductsSelectScalar = {
     id?: boolean
@@ -3332,6 +3394,8 @@ export namespace Prisma {
     price?: boolean
     currency?: boolean
     discount?: boolean
+    info?: boolean
+    cpu_info?: boolean
     in_stock?: boolean
     rating?: boolean
     brandId?: boolean
@@ -3349,6 +3413,14 @@ export namespace Prisma {
     CartItem?: boolean | Products$CartItemArgs<ExtArgs>
     WishlistItem?: boolean | Products$WishlistItemArgs<ExtArgs>
     _count?: boolean | ProductsCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ProductsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    brand?: boolean | BrandDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }
+  export type ProductsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    brand?: boolean | BrandDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
   }
 
   export type $ProductsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3368,6 +3440,8 @@ export namespace Prisma {
       price: number
       currency: string
       discount: number
+      info: Prisma.JsonValue
+      cpu_info: Prisma.JsonValue
       in_stock: number
       rating: number
       brandId: string
@@ -3376,10 +3450,7 @@ export namespace Prisma {
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["products"]>
-    composites: {
-      info: Prisma.$InfoPayload
-      cpu_info: Prisma.$Cpu_InfoPayload
-    }
+    composites: {}
   }
 
   type ProductsGetPayload<S extends boolean | null | undefined | ProductsDefaultArgs> = $Result.GetResult<Prisma.$ProductsPayload, S>
@@ -3496,6 +3567,30 @@ export namespace Prisma {
     createMany<T extends ProductsCreateManyArgs>(args?: SelectSubset<T, ProductsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many Products and returns the data saved in the database.
+     * @param {ProductsCreateManyAndReturnArgs} args - Arguments to create many Products.
+     * @example
+     * // Create many Products
+     * const products = await prisma.products.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Products and only return the `id`
+     * const productsWithIdOnly = await prisma.products.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProductsCreateManyAndReturnArgs>(args?: SelectSubset<T, ProductsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a Products.
      * @param {ProductsDeleteArgs} args - Arguments to delete one Products.
      * @example
@@ -3560,6 +3655,36 @@ export namespace Prisma {
     updateMany<T extends ProductsUpdateManyArgs>(args: SelectSubset<T, ProductsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Products and returns the data updated in the database.
+     * @param {ProductsUpdateManyAndReturnArgs} args - Arguments to update many Products.
+     * @example
+     * // Update many Products
+     * const products = await prisma.products.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Products and only return the `id`
+     * const productsWithIdOnly = await prisma.products.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProductsUpdateManyAndReturnArgs>(args: SelectSubset<T, ProductsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one Products.
      * @param {ProductsUpsertArgs} args - Arguments to update or create a Products.
      * @example
@@ -3577,29 +3702,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends ProductsUpsertArgs>(args: SelectSubset<T, ProductsUpsertArgs<ExtArgs>>): Prisma__ProductsClient<$Result.GetResult<Prisma.$ProductsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Products that matches the filter.
-     * @param {ProductsFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const products = await prisma.products.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: ProductsFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Products.
-     * @param {ProductsAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const products = await prisma.products.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: ProductsAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -3782,6 +3884,8 @@ export namespace Prisma {
     readonly price: FieldRef<"Products", 'Float'>
     readonly currency: FieldRef<"Products", 'String'>
     readonly discount: FieldRef<"Products", 'Float'>
+    readonly info: FieldRef<"Products", 'Json'>
+    readonly cpu_info: FieldRef<"Products", 'Json'>
     readonly in_stock: FieldRef<"Products", 'Int'>
     readonly rating: FieldRef<"Products", 'Float'>
     readonly brandId: FieldRef<"Products", 'String'>
@@ -4018,6 +4122,30 @@ export namespace Prisma {
      * The data used to create many Products.
      */
     data: ProductsCreateManyInput | ProductsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Products createManyAndReturn
+   */
+  export type ProductsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Products
+     */
+    select?: ProductsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Products
+     */
+    omit?: ProductsOmit<ExtArgs> | null
+    /**
+     * The data used to create many Products.
+     */
+    data: ProductsCreateManyInput | ProductsCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductsIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4062,6 +4190,36 @@ export namespace Prisma {
      * Limit how many Products to update.
      */
     limit?: number
+  }
+
+  /**
+   * Products updateManyAndReturn
+   */
+  export type ProductsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Products
+     */
+    select?: ProductsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Products
+     */
+    omit?: ProductsOmit<ExtArgs> | null
+    /**
+     * The data used to update Products.
+     */
+    data: XOR<ProductsUpdateManyMutationInput, ProductsUncheckedUpdateManyInput>
+    /**
+     * Filter which Products to update
+     */
+    where?: ProductsWhereInput
+    /**
+     * Limit how many Products to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductsIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4128,34 +4286,6 @@ export namespace Prisma {
      * Limit how many Products to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Products findRaw
-   */
-  export type ProductsFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Products aggregateRaw
-   */
-  export type ProductsAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -4394,7 +4524,17 @@ export namespace Prisma {
     _count?: boolean | CartCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cart"]>
 
+  export type CartSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cart"]>
 
+  export type CartSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cart"]>
 
   export type CartSelectScalar = {
     id?: boolean
@@ -4406,6 +4546,12 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
     items?: boolean | Cart$itemsArgs<ExtArgs>
     _count?: boolean | CartCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CartIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CartIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $CartPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4535,6 +4681,30 @@ export namespace Prisma {
     createMany<T extends CartCreateManyArgs>(args?: SelectSubset<T, CartCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many Carts and returns the data saved in the database.
+     * @param {CartCreateManyAndReturnArgs} args - Arguments to create many Carts.
+     * @example
+     * // Create many Carts
+     * const cart = await prisma.cart.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Carts and only return the `id`
+     * const cartWithIdOnly = await prisma.cart.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CartCreateManyAndReturnArgs>(args?: SelectSubset<T, CartCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a Cart.
      * @param {CartDeleteArgs} args - Arguments to delete one Cart.
      * @example
@@ -4599,6 +4769,36 @@ export namespace Prisma {
     updateMany<T extends CartUpdateManyArgs>(args: SelectSubset<T, CartUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Carts and returns the data updated in the database.
+     * @param {CartUpdateManyAndReturnArgs} args - Arguments to update many Carts.
+     * @example
+     * // Update many Carts
+     * const cart = await prisma.cart.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Carts and only return the `id`
+     * const cartWithIdOnly = await prisma.cart.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CartUpdateManyAndReturnArgs>(args: SelectSubset<T, CartUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one Cart.
      * @param {CartUpsertArgs} args - Arguments to update or create a Cart.
      * @example
@@ -4616,29 +4816,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends CartUpsertArgs>(args: SelectSubset<T, CartUpsertArgs<ExtArgs>>): Prisma__CartClient<$Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Carts that matches the filter.
-     * @param {CartFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const cart = await prisma.cart.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: CartFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Cart.
-     * @param {CartAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const cart = await prisma.cart.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: CartAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -5042,6 +5219,30 @@ export namespace Prisma {
      * The data used to create many Carts.
      */
     data: CartCreateManyInput | CartCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Cart createManyAndReturn
+   */
+  export type CartCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Cart
+     */
+    select?: CartSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Cart
+     */
+    omit?: CartOmit<ExtArgs> | null
+    /**
+     * The data used to create many Carts.
+     */
+    data: CartCreateManyInput | CartCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CartIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5086,6 +5287,36 @@ export namespace Prisma {
      * Limit how many Carts to update.
      */
     limit?: number
+  }
+
+  /**
+   * Cart updateManyAndReturn
+   */
+  export type CartUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Cart
+     */
+    select?: CartSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Cart
+     */
+    omit?: CartOmit<ExtArgs> | null
+    /**
+     * The data used to update Carts.
+     */
+    data: XOR<CartUpdateManyMutationInput, CartUncheckedUpdateManyInput>
+    /**
+     * Filter which Carts to update
+     */
+    where?: CartWhereInput
+    /**
+     * Limit how many Carts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CartIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5152,34 +5383,6 @@ export namespace Prisma {
      * Limit how many Carts to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Cart findRaw
-   */
-  export type CartFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Cart aggregateRaw
-   */
-  export type CartAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -5419,7 +5622,23 @@ export namespace Prisma {
     product?: boolean | ProductsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["cartItem"]>
 
+  export type CartItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cartId?: boolean
+    productId?: boolean
+    quantity?: boolean
+    cart?: boolean | CartDefaultArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cartItem"]>
 
+  export type CartItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cartId?: boolean
+    productId?: boolean
+    quantity?: boolean
+    cart?: boolean | CartDefaultArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cartItem"]>
 
   export type CartItemSelectScalar = {
     id?: boolean
@@ -5430,6 +5649,14 @@ export namespace Prisma {
 
   export type CartItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cartId" | "productId" | "quantity", ExtArgs["result"]["cartItem"]>
   export type CartItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cart?: boolean | CartDefaultArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
+  }
+  export type CartItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cart?: boolean | CartDefaultArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
+  }
+  export type CartItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cart?: boolean | CartDefaultArgs<ExtArgs>
     product?: boolean | ProductsDefaultArgs<ExtArgs>
   }
@@ -5563,6 +5790,30 @@ export namespace Prisma {
     createMany<T extends CartItemCreateManyArgs>(args?: SelectSubset<T, CartItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many CartItems and returns the data saved in the database.
+     * @param {CartItemCreateManyAndReturnArgs} args - Arguments to create many CartItems.
+     * @example
+     * // Create many CartItems
+     * const cartItem = await prisma.cartItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CartItems and only return the `id`
+     * const cartItemWithIdOnly = await prisma.cartItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CartItemCreateManyAndReturnArgs>(args?: SelectSubset<T, CartItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a CartItem.
      * @param {CartItemDeleteArgs} args - Arguments to delete one CartItem.
      * @example
@@ -5627,6 +5878,36 @@ export namespace Prisma {
     updateMany<T extends CartItemUpdateManyArgs>(args: SelectSubset<T, CartItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more CartItems and returns the data updated in the database.
+     * @param {CartItemUpdateManyAndReturnArgs} args - Arguments to update many CartItems.
+     * @example
+     * // Update many CartItems
+     * const cartItem = await prisma.cartItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CartItems and only return the `id`
+     * const cartItemWithIdOnly = await prisma.cartItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CartItemUpdateManyAndReturnArgs>(args: SelectSubset<T, CartItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one CartItem.
      * @param {CartItemUpsertArgs} args - Arguments to update or create a CartItem.
      * @example
@@ -5644,29 +5925,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends CartItemUpsertArgs>(args: SelectSubset<T, CartItemUpsertArgs<ExtArgs>>): Prisma__CartItemClient<$Result.GetResult<Prisma.$CartItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more CartItems that matches the filter.
-     * @param {CartItemFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const cartItem = await prisma.cartItem.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: CartItemFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a CartItem.
-     * @param {CartItemAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const cartItem = await prisma.cartItem.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: CartItemAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -6072,6 +6330,30 @@ export namespace Prisma {
      * The data used to create many CartItems.
      */
     data: CartItemCreateManyInput | CartItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CartItem createManyAndReturn
+   */
+  export type CartItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CartItem
+     */
+    select?: CartItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CartItem
+     */
+    omit?: CartItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many CartItems.
+     */
+    data: CartItemCreateManyInput | CartItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CartItemIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6116,6 +6398,36 @@ export namespace Prisma {
      * Limit how many CartItems to update.
      */
     limit?: number
+  }
+
+  /**
+   * CartItem updateManyAndReturn
+   */
+  export type CartItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CartItem
+     */
+    select?: CartItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CartItem
+     */
+    omit?: CartItemOmit<ExtArgs> | null
+    /**
+     * The data used to update CartItems.
+     */
+    data: XOR<CartItemUpdateManyMutationInput, CartItemUncheckedUpdateManyInput>
+    /**
+     * Filter which CartItems to update
+     */
+    where?: CartItemWhereInput
+    /**
+     * Limit how many CartItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CartItemIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6182,34 +6494,6 @@ export namespace Prisma {
      * Limit how many CartItems to delete.
      */
     limit?: number
-  }
-
-  /**
-   * CartItem findRaw
-   */
-  export type CartItemFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * CartItem aggregateRaw
-   */
-  export type CartItemAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -6399,7 +6683,21 @@ export namespace Prisma {
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
 
+  export type CategorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["category"]>
 
+  export type CategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["category"]>
 
   export type CategorySelectScalar = {
     id?: boolean
@@ -6414,6 +6712,8 @@ export namespace Prisma {
     products?: boolean | Category$productsArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }
+  export type CategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type CategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Category"
@@ -6544,6 +6844,30 @@ export namespace Prisma {
     createMany<T extends CategoryCreateManyArgs>(args?: SelectSubset<T, CategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many Categories and returns the data saved in the database.
+     * @param {CategoryCreateManyAndReturnArgs} args - Arguments to create many Categories.
+     * @example
+     * // Create many Categories
+     * const category = await prisma.category.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Categories and only return the `id`
+     * const categoryWithIdOnly = await prisma.category.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CategoryCreateManyAndReturnArgs>(args?: SelectSubset<T, CategoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a Category.
      * @param {CategoryDeleteArgs} args - Arguments to delete one Category.
      * @example
@@ -6608,6 +6932,36 @@ export namespace Prisma {
     updateMany<T extends CategoryUpdateManyArgs>(args: SelectSubset<T, CategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Categories and returns the data updated in the database.
+     * @param {CategoryUpdateManyAndReturnArgs} args - Arguments to update many Categories.
+     * @example
+     * // Update many Categories
+     * const category = await prisma.category.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Categories and only return the `id`
+     * const categoryWithIdOnly = await prisma.category.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CategoryUpdateManyAndReturnArgs>(args: SelectSubset<T, CategoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one Category.
      * @param {CategoryUpsertArgs} args - Arguments to update or create a Category.
      * @example
@@ -6625,29 +6979,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends CategoryUpsertArgs>(args: SelectSubset<T, CategoryUpsertArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Categories that matches the filter.
-     * @param {CategoryFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const category = await prisma.category.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: CategoryFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Category.
-     * @param {CategoryAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const category = await prisma.category.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: CategoryAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -7053,6 +7384,26 @@ export namespace Prisma {
      * The data used to create many Categories.
      */
     data: CategoryCreateManyInput | CategoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Category createManyAndReturn
+   */
+  export type CategoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many Categories.
+     */
+    data: CategoryCreateManyInput | CategoryCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -7085,6 +7436,32 @@ export namespace Prisma {
    * Category updateMany
    */
   export type CategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Categories.
+     */
+    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which Categories to update
+     */
+    where?: CategoryWhereInput
+    /**
+     * Limit how many Categories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Category updateManyAndReturn
+   */
+  export type CategoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
     /**
      * The data used to update Categories.
      */
@@ -7163,34 +7540,6 @@ export namespace Prisma {
      * Limit how many Categories to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Category findRaw
-   */
-  export type CategoryFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Category aggregateRaw
-   */
-  export type CategoryAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -7404,7 +7753,21 @@ export namespace Prisma {
     _count?: boolean | BrandCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["brand"]>
 
+  export type BrandSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["brand"]>
 
+  export type BrandSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["brand"]>
 
   export type BrandSelectScalar = {
     id?: boolean
@@ -7419,6 +7782,8 @@ export namespace Prisma {
     products?: boolean | Brand$productsArgs<ExtArgs>
     _count?: boolean | BrandCountOutputTypeDefaultArgs<ExtArgs>
   }
+  export type BrandIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type BrandIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $BrandPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Brand"
@@ -7549,6 +7914,30 @@ export namespace Prisma {
     createMany<T extends BrandCreateManyArgs>(args?: SelectSubset<T, BrandCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many Brands and returns the data saved in the database.
+     * @param {BrandCreateManyAndReturnArgs} args - Arguments to create many Brands.
+     * @example
+     * // Create many Brands
+     * const brand = await prisma.brand.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Brands and only return the `id`
+     * const brandWithIdOnly = await prisma.brand.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BrandCreateManyAndReturnArgs>(args?: SelectSubset<T, BrandCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BrandPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a Brand.
      * @param {BrandDeleteArgs} args - Arguments to delete one Brand.
      * @example
@@ -7613,6 +8002,36 @@ export namespace Prisma {
     updateMany<T extends BrandUpdateManyArgs>(args: SelectSubset<T, BrandUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Brands and returns the data updated in the database.
+     * @param {BrandUpdateManyAndReturnArgs} args - Arguments to update many Brands.
+     * @example
+     * // Update many Brands
+     * const brand = await prisma.brand.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Brands and only return the `id`
+     * const brandWithIdOnly = await prisma.brand.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BrandUpdateManyAndReturnArgs>(args: SelectSubset<T, BrandUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BrandPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one Brand.
      * @param {BrandUpsertArgs} args - Arguments to update or create a Brand.
      * @example
@@ -7630,29 +8049,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends BrandUpsertArgs>(args: SelectSubset<T, BrandUpsertArgs<ExtArgs>>): Prisma__BrandClient<$Result.GetResult<Prisma.$BrandPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Brands that matches the filter.
-     * @param {BrandFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const brand = await prisma.brand.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: BrandFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Brand.
-     * @param {BrandAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const brand = await prisma.brand.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: BrandAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -8058,6 +8454,26 @@ export namespace Prisma {
      * The data used to create many Brands.
      */
     data: BrandCreateManyInput | BrandCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Brand createManyAndReturn
+   */
+  export type BrandCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Brand
+     */
+    select?: BrandSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Brand
+     */
+    omit?: BrandOmit<ExtArgs> | null
+    /**
+     * The data used to create many Brands.
+     */
+    data: BrandCreateManyInput | BrandCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -8090,6 +8506,32 @@ export namespace Prisma {
    * Brand updateMany
    */
   export type BrandUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Brands.
+     */
+    data: XOR<BrandUpdateManyMutationInput, BrandUncheckedUpdateManyInput>
+    /**
+     * Filter which Brands to update
+     */
+    where?: BrandWhereInput
+    /**
+     * Limit how many Brands to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Brand updateManyAndReturn
+   */
+  export type BrandUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Brand
+     */
+    select?: BrandSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Brand
+     */
+    omit?: BrandOmit<ExtArgs> | null
     /**
      * The data used to update Brands.
      */
@@ -8168,34 +8610,6 @@ export namespace Prisma {
      * Limit how many Brands to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Brand findRaw
-   */
-  export type BrandFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Brand aggregateRaw
-   */
-  export type BrandAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -8475,7 +8889,33 @@ export namespace Prisma {
     product?: boolean | Comments$productArgs<ExtArgs>
   }, ExtArgs["result"]["comments"]>
 
+  export type CommentsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    rating?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    author_id?: boolean
+    product_id?: boolean
+    cartId?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    product?: boolean | Comments$productArgs<ExtArgs>
+  }, ExtArgs["result"]["comments"]>
 
+  export type CommentsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    rating?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    author_id?: boolean
+    product_id?: boolean
+    cartId?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    product?: boolean | Comments$productArgs<ExtArgs>
+  }, ExtArgs["result"]["comments"]>
 
   export type CommentsSelectScalar = {
     id?: boolean
@@ -8491,6 +8931,14 @@ export namespace Prisma {
 
   export type CommentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "rating" | "created_at" | "updated_at" | "author_id" | "product_id" | "cartId", ExtArgs["result"]["comments"]>
   export type CommentsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    product?: boolean | Comments$productArgs<ExtArgs>
+  }
+  export type CommentsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    product?: boolean | Comments$productArgs<ExtArgs>
+  }
+  export type CommentsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     product?: boolean | Comments$productArgs<ExtArgs>
   }
@@ -8629,6 +9077,30 @@ export namespace Prisma {
     createMany<T extends CommentsCreateManyArgs>(args?: SelectSubset<T, CommentsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many Comments and returns the data saved in the database.
+     * @param {CommentsCreateManyAndReturnArgs} args - Arguments to create many Comments.
+     * @example
+     * // Create many Comments
+     * const comments = await prisma.comments.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Comments and only return the `id`
+     * const commentsWithIdOnly = await prisma.comments.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CommentsCreateManyAndReturnArgs>(args?: SelectSubset<T, CommentsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a Comments.
      * @param {CommentsDeleteArgs} args - Arguments to delete one Comments.
      * @example
@@ -8693,6 +9165,36 @@ export namespace Prisma {
     updateMany<T extends CommentsUpdateManyArgs>(args: SelectSubset<T, CommentsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Comments and returns the data updated in the database.
+     * @param {CommentsUpdateManyAndReturnArgs} args - Arguments to update many Comments.
+     * @example
+     * // Update many Comments
+     * const comments = await prisma.comments.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Comments and only return the `id`
+     * const commentsWithIdOnly = await prisma.comments.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CommentsUpdateManyAndReturnArgs>(args: SelectSubset<T, CommentsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one Comments.
      * @param {CommentsUpsertArgs} args - Arguments to update or create a Comments.
      * @example
@@ -8710,29 +9212,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends CommentsUpsertArgs>(args: SelectSubset<T, CommentsUpsertArgs<ExtArgs>>): Prisma__CommentsClient<$Result.GetResult<Prisma.$CommentsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Comments that matches the filter.
-     * @param {CommentsFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const comments = await prisma.comments.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: CommentsFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Comments.
-     * @param {CommentsAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const comments = await prisma.comments.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: CommentsAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -9143,6 +9622,30 @@ export namespace Prisma {
      * The data used to create many Comments.
      */
     data: CommentsCreateManyInput | CommentsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Comments createManyAndReturn
+   */
+  export type CommentsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comments
+     */
+    select?: CommentsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comments
+     */
+    omit?: CommentsOmit<ExtArgs> | null
+    /**
+     * The data used to create many Comments.
+     */
+    data: CommentsCreateManyInput | CommentsCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentsIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9187,6 +9690,36 @@ export namespace Prisma {
      * Limit how many Comments to update.
      */
     limit?: number
+  }
+
+  /**
+   * Comments updateManyAndReturn
+   */
+  export type CommentsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comments
+     */
+    select?: CommentsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comments
+     */
+    omit?: CommentsOmit<ExtArgs> | null
+    /**
+     * The data used to update Comments.
+     */
+    data: XOR<CommentsUpdateManyMutationInput, CommentsUncheckedUpdateManyInput>
+    /**
+     * Filter which Comments to update
+     */
+    where?: CommentsWhereInput
+    /**
+     * Limit how many Comments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentsIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9253,34 +9786,6 @@ export namespace Prisma {
      * Limit how many Comments to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Comments findRaw
-   */
-  export type CommentsFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Comments aggregateRaw
-   */
-  export type CommentsAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -9466,7 +9971,17 @@ export namespace Prisma {
     _count?: boolean | WishlistCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wishlist"]>
 
+  export type WishlistSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["wishlist"]>
 
+  export type WishlistSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["wishlist"]>
 
   export type WishlistSelectScalar = {
     id?: boolean
@@ -9478,6 +9993,12 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
     items?: boolean | Wishlist$itemsArgs<ExtArgs>
     _count?: boolean | WishlistCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type WishlistIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type WishlistIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $WishlistPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9607,6 +10128,30 @@ export namespace Prisma {
     createMany<T extends WishlistCreateManyArgs>(args?: SelectSubset<T, WishlistCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many Wishlists and returns the data saved in the database.
+     * @param {WishlistCreateManyAndReturnArgs} args - Arguments to create many Wishlists.
+     * @example
+     * // Create many Wishlists
+     * const wishlist = await prisma.wishlist.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Wishlists and only return the `id`
+     * const wishlistWithIdOnly = await prisma.wishlist.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WishlistCreateManyAndReturnArgs>(args?: SelectSubset<T, WishlistCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WishlistPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a Wishlist.
      * @param {WishlistDeleteArgs} args - Arguments to delete one Wishlist.
      * @example
@@ -9671,6 +10216,36 @@ export namespace Prisma {
     updateMany<T extends WishlistUpdateManyArgs>(args: SelectSubset<T, WishlistUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Wishlists and returns the data updated in the database.
+     * @param {WishlistUpdateManyAndReturnArgs} args - Arguments to update many Wishlists.
+     * @example
+     * // Update many Wishlists
+     * const wishlist = await prisma.wishlist.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Wishlists and only return the `id`
+     * const wishlistWithIdOnly = await prisma.wishlist.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WishlistUpdateManyAndReturnArgs>(args: SelectSubset<T, WishlistUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WishlistPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one Wishlist.
      * @param {WishlistUpsertArgs} args - Arguments to update or create a Wishlist.
      * @example
@@ -9688,29 +10263,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends WishlistUpsertArgs>(args: SelectSubset<T, WishlistUpsertArgs<ExtArgs>>): Prisma__WishlistClient<$Result.GetResult<Prisma.$WishlistPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Wishlists that matches the filter.
-     * @param {WishlistFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const wishlist = await prisma.wishlist.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: WishlistFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Wishlist.
-     * @param {WishlistAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const wishlist = await prisma.wishlist.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: WishlistAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -10114,6 +10666,30 @@ export namespace Prisma {
      * The data used to create many Wishlists.
      */
     data: WishlistCreateManyInput | WishlistCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Wishlist createManyAndReturn
+   */
+  export type WishlistCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Wishlist
+     */
+    select?: WishlistSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Wishlist
+     */
+    omit?: WishlistOmit<ExtArgs> | null
+    /**
+     * The data used to create many Wishlists.
+     */
+    data: WishlistCreateManyInput | WishlistCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WishlistIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -10158,6 +10734,36 @@ export namespace Prisma {
      * Limit how many Wishlists to update.
      */
     limit?: number
+  }
+
+  /**
+   * Wishlist updateManyAndReturn
+   */
+  export type WishlistUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Wishlist
+     */
+    select?: WishlistSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Wishlist
+     */
+    omit?: WishlistOmit<ExtArgs> | null
+    /**
+     * The data used to update Wishlists.
+     */
+    data: XOR<WishlistUpdateManyMutationInput, WishlistUncheckedUpdateManyInput>
+    /**
+     * Filter which Wishlists to update
+     */
+    where?: WishlistWhereInput
+    /**
+     * Limit how many Wishlists to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WishlistIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -10224,34 +10830,6 @@ export namespace Prisma {
      * Limit how many Wishlists to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Wishlist findRaw
-   */
-  export type WishlistFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Wishlist aggregateRaw
-   */
-  export type WishlistAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -10449,7 +11027,21 @@ export namespace Prisma {
     product?: boolean | ProductsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["wishlistItem"]>
 
+  export type WishlistItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    wishlistId?: boolean
+    productId?: boolean
+    wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["wishlistItem"]>
 
+  export type WishlistItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    wishlistId?: boolean
+    productId?: boolean
+    wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["wishlistItem"]>
 
   export type WishlistItemSelectScalar = {
     id?: boolean
@@ -10459,6 +11051,14 @@ export namespace Prisma {
 
   export type WishlistItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "wishlistId" | "productId", ExtArgs["result"]["wishlistItem"]>
   export type WishlistItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
+  }
+  export type WishlistItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
+  }
+  export type WishlistItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     wishlist?: boolean | WishlistDefaultArgs<ExtArgs>
     product?: boolean | ProductsDefaultArgs<ExtArgs>
   }
@@ -10591,6 +11191,30 @@ export namespace Prisma {
     createMany<T extends WishlistItemCreateManyArgs>(args?: SelectSubset<T, WishlistItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many WishlistItems and returns the data saved in the database.
+     * @param {WishlistItemCreateManyAndReturnArgs} args - Arguments to create many WishlistItems.
+     * @example
+     * // Create many WishlistItems
+     * const wishlistItem = await prisma.wishlistItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WishlistItems and only return the `id`
+     * const wishlistItemWithIdOnly = await prisma.wishlistItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WishlistItemCreateManyAndReturnArgs>(args?: SelectSubset<T, WishlistItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WishlistItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a WishlistItem.
      * @param {WishlistItemDeleteArgs} args - Arguments to delete one WishlistItem.
      * @example
@@ -10655,6 +11279,36 @@ export namespace Prisma {
     updateMany<T extends WishlistItemUpdateManyArgs>(args: SelectSubset<T, WishlistItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more WishlistItems and returns the data updated in the database.
+     * @param {WishlistItemUpdateManyAndReturnArgs} args - Arguments to update many WishlistItems.
+     * @example
+     * // Update many WishlistItems
+     * const wishlistItem = await prisma.wishlistItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WishlistItems and only return the `id`
+     * const wishlistItemWithIdOnly = await prisma.wishlistItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WishlistItemUpdateManyAndReturnArgs>(args: SelectSubset<T, WishlistItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WishlistItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one WishlistItem.
      * @param {WishlistItemUpsertArgs} args - Arguments to update or create a WishlistItem.
      * @example
@@ -10672,29 +11326,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends WishlistItemUpsertArgs>(args: SelectSubset<T, WishlistItemUpsertArgs<ExtArgs>>): Prisma__WishlistItemClient<$Result.GetResult<Prisma.$WishlistItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more WishlistItems that matches the filter.
-     * @param {WishlistItemFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const wishlistItem = await prisma.wishlistItem.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: WishlistItemFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a WishlistItem.
-     * @param {WishlistItemAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const wishlistItem = await prisma.wishlistItem.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: WishlistItemAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -11099,6 +11730,30 @@ export namespace Prisma {
      * The data used to create many WishlistItems.
      */
     data: WishlistItemCreateManyInput | WishlistItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WishlistItem createManyAndReturn
+   */
+  export type WishlistItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WishlistItem
+     */
+    select?: WishlistItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WishlistItem
+     */
+    omit?: WishlistItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many WishlistItems.
+     */
+    data: WishlistItemCreateManyInput | WishlistItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WishlistItemIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -11143,6 +11798,36 @@ export namespace Prisma {
      * Limit how many WishlistItems to update.
      */
     limit?: number
+  }
+
+  /**
+   * WishlistItem updateManyAndReturn
+   */
+  export type WishlistItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WishlistItem
+     */
+    select?: WishlistItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WishlistItem
+     */
+    omit?: WishlistItemOmit<ExtArgs> | null
+    /**
+     * The data used to update WishlistItems.
+     */
+    data: XOR<WishlistItemUpdateManyMutationInput, WishlistItemUncheckedUpdateManyInput>
+    /**
+     * Filter which WishlistItems to update
+     */
+    where?: WishlistItemWhereInput
+    /**
+     * Limit how many WishlistItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WishlistItemIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -11209,34 +11894,6 @@ export namespace Prisma {
      * Limit how many WishlistItems to delete.
      */
     limit?: number
-  }
-
-  /**
-   * WishlistItem findRaw
-   */
-  export type WishlistItemFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * WishlistItem aggregateRaw
-   */
-  export type WishlistItemAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
   }
 
   /**
@@ -11408,7 +12065,17 @@ export namespace Prisma {
     googleID?: boolean
   }, ExtArgs["result"]["google"]>
 
+  export type GoogleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    username?: boolean
+    googleID?: boolean
+  }, ExtArgs["result"]["google"]>
 
+  export type GoogleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    username?: boolean
+    googleID?: boolean
+  }, ExtArgs["result"]["google"]>
 
   export type GoogleSelectScalar = {
     id?: boolean
@@ -11543,6 +12210,30 @@ export namespace Prisma {
     createMany<T extends GoogleCreateManyArgs>(args?: SelectSubset<T, GoogleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Create many Googles and returns the data saved in the database.
+     * @param {GoogleCreateManyAndReturnArgs} args - Arguments to create many Googles.
+     * @example
+     * // Create many Googles
+     * const google = await prisma.google.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Googles and only return the `id`
+     * const googleWithIdOnly = await prisma.google.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GoogleCreateManyAndReturnArgs>(args?: SelectSubset<T, GoogleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GooglePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Delete a Google.
      * @param {GoogleDeleteArgs} args - Arguments to delete one Google.
      * @example
@@ -11607,6 +12298,36 @@ export namespace Prisma {
     updateMany<T extends GoogleUpdateManyArgs>(args: SelectSubset<T, GoogleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
+     * Update zero or more Googles and returns the data updated in the database.
+     * @param {GoogleUpdateManyAndReturnArgs} args - Arguments to update many Googles.
+     * @example
+     * // Update many Googles
+     * const google = await prisma.google.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Googles and only return the `id`
+     * const googleWithIdOnly = await prisma.google.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GoogleUpdateManyAndReturnArgs>(args: SelectSubset<T, GoogleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GooglePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
      * Create or update one Google.
      * @param {GoogleUpsertArgs} args - Arguments to update or create a Google.
      * @example
@@ -11624,29 +12345,6 @@ export namespace Prisma {
      * })
      */
     upsert<T extends GoogleUpsertArgs>(args: SelectSubset<T, GoogleUpsertArgs<ExtArgs>>): Prisma__GoogleClient<$Result.GetResult<Prisma.$GooglePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Googles that matches the filter.
-     * @param {GoogleFindRawArgs} args - Select which filters you would like to apply.
-     * @example
-     * const google = await prisma.google.findRaw({
-     *   filter: { age: { $gt: 25 } }
-     * })
-     */
-    findRaw(args?: GoogleFindRawArgs): Prisma.PrismaPromise<JsonObject>
-
-    /**
-     * Perform aggregation operations on a Google.
-     * @param {GoogleAggregateRawArgs} args - Select which aggregations you would like to apply.
-     * @example
-     * const google = await prisma.google.aggregateRaw({
-     *   pipeline: [
-     *     { $match: { status: "registered" } },
-     *     { $group: { _id: "$country", total: { $sum: 1 } } }
-     *   ]
-     * })
-     */
-    aggregateRaw(args?: GoogleAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -12025,6 +12723,26 @@ export namespace Prisma {
      * The data used to create many Googles.
      */
     data: GoogleCreateManyInput | GoogleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Google createManyAndReturn
+   */
+  export type GoogleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Google
+     */
+    select?: GoogleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Google
+     */
+    omit?: GoogleOmit<ExtArgs> | null
+    /**
+     * The data used to create many Googles.
+     */
+    data: GoogleCreateManyInput | GoogleCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -12053,6 +12771,32 @@ export namespace Prisma {
    * Google updateMany
    */
   export type GoogleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Googles.
+     */
+    data: XOR<GoogleUpdateManyMutationInput, GoogleUncheckedUpdateManyInput>
+    /**
+     * Filter which Googles to update
+     */
+    where?: GoogleWhereInput
+    /**
+     * Limit how many Googles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Google updateManyAndReturn
+   */
+  export type GoogleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Google
+     */
+    select?: GoogleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Google
+     */
+    omit?: GoogleOmit<ExtArgs> | null
     /**
      * The data used to update Googles.
      */
@@ -12126,34 +12870,6 @@ export namespace Prisma {
   }
 
   /**
-   * Google findRaw
-   */
-  export type GoogleFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
-     */
-    filter?: InputJsonValue
-    /**
-     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
-   * Google aggregateRaw
-   */
-  export type GoogleAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
-     */
-    pipeline?: InputJsonValue[]
-    /**
-     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
-     */
-    options?: InputJsonValue
-  }
-
-  /**
    * Google without action
    */
   export type GoogleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12172,11 +12888,24 @@ export namespace Prisma {
    * Enums
    */
 
+  export const TransactionIsolationLevel: {
+    ReadUncommitted: 'ReadUncommitted',
+    ReadCommitted: 'ReadCommitted',
+    RepeatableRead: 'RepeatableRead',
+    Serializable: 'Serializable'
+  };
+
+  export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
   export const UserScalarFieldEnum: {
     id: 'id',
     email: 'email',
     name: 'name',
     password: 'password',
+    is_verified: 'is_verified',
+    verify_token: 'verify_token',
+    expiration_verify_token: 'expiration_verify_token',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -12192,6 +12921,8 @@ export namespace Prisma {
     price: 'price',
     currency: 'currency',
     discount: 'discount',
+    info: 'info',
+    cpu_info: 'cpu_info',
     in_stock: 'in_stock',
     rating: 'rating',
     brandId: 'brandId',
@@ -12293,12 +13024,36 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -12317,6 +13072,13 @@ export namespace Prisma {
    * Reference to a field of type 'String[]'
    */
   export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -12349,6 +13111,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -12369,10 +13145,13 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    id?: StringFilter<"User"> | string
+    id?: UuidFilter<"User"> | string
     email?: StringFilter<"User"> | string
     name?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
+    is_verified?: BoolFilter<"User"> | boolean
+    verify_token?: StringNullableFilter<"User"> | string | null
+    expiration_verify_token?: DateTimeNullableFilter<"User"> | Date | string | null
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     comments?: CommentsListRelationFilter
@@ -12385,6 +13164,9 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     password?: SortOrder
+    is_verified?: SortOrder
+    verify_token?: SortOrderInput | SortOrder
+    expiration_verify_token?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     comments?: CommentsOrderByRelationAggregateInput
@@ -12400,6 +13182,9 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
+    is_verified?: BoolFilter<"User"> | boolean
+    verify_token?: StringNullableFilter<"User"> | string | null
+    expiration_verify_token?: DateTimeNullableFilter<"User"> | Date | string | null
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     comments?: CommentsListRelationFilter
@@ -12412,6 +13197,9 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     password?: SortOrder
+    is_verified?: SortOrder
+    verify_token?: SortOrderInput | SortOrder
+    expiration_verify_token?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -12423,10 +13211,13 @@ export namespace Prisma {
     AND?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"User"> | string
+    id?: UuidWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
+    is_verified?: BoolWithAggregatesFilter<"User"> | boolean
+    verify_token?: StringNullableWithAggregatesFilter<"User"> | string | null
+    expiration_verify_token?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     created_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -12435,19 +13226,19 @@ export namespace Prisma {
     AND?: ProductsWhereInput | ProductsWhereInput[]
     OR?: ProductsWhereInput[]
     NOT?: ProductsWhereInput | ProductsWhereInput[]
-    id?: StringFilter<"Products"> | string
+    id?: UuidFilter<"Products"> | string
     name?: StringFilter<"Products"> | string
     description?: StringFilter<"Products"> | string
     slug?: StringFilter<"Products"> | string
     price?: FloatFilter<"Products"> | number
     currency?: StringFilter<"Products"> | string
     discount?: FloatFilter<"Products"> | number
-    info?: XOR<InfoCompositeFilter, InfoObjectEqualityInput>
-    cpu_info?: XOR<Cpu_InfoCompositeFilter, Cpu_InfoObjectEqualityInput>
+    info?: JsonFilter<"Products">
+    cpu_info?: JsonFilter<"Products">
     in_stock?: IntFilter<"Products"> | number
     rating?: FloatFilter<"Products"> | number
-    brandId?: StringFilter<"Products"> | string
-    categoryId?: StringFilter<"Products"> | string
+    brandId?: UuidFilter<"Products"> | string
+    categoryId?: UuidFilter<"Products"> | string
     images?: StringNullableListFilter<"Products">
     created_at?: DateTimeFilter<"Products"> | Date | string
     updated_at?: DateTimeFilter<"Products"> | Date | string
@@ -12466,8 +13257,8 @@ export namespace Prisma {
     price?: SortOrder
     currency?: SortOrder
     discount?: SortOrder
-    info?: InfoOrderByInput
-    cpu_info?: Cpu_InfoOrderByInput
+    info?: SortOrder
+    cpu_info?: SortOrder
     in_stock?: SortOrder
     rating?: SortOrder
     brandId?: SortOrder
@@ -12493,12 +13284,12 @@ export namespace Prisma {
     price?: FloatFilter<"Products"> | number
     currency?: StringFilter<"Products"> | string
     discount?: FloatFilter<"Products"> | number
-    info?: XOR<InfoCompositeFilter, InfoObjectEqualityInput>
-    cpu_info?: XOR<Cpu_InfoCompositeFilter, Cpu_InfoObjectEqualityInput>
+    info?: JsonFilter<"Products">
+    cpu_info?: JsonFilter<"Products">
     in_stock?: IntFilter<"Products"> | number
     rating?: FloatFilter<"Products"> | number
-    brandId?: StringFilter<"Products"> | string
-    categoryId?: StringFilter<"Products"> | string
+    brandId?: UuidFilter<"Products"> | string
+    categoryId?: UuidFilter<"Products"> | string
     images?: StringNullableListFilter<"Products">
     created_at?: DateTimeFilter<"Products"> | Date | string
     updated_at?: DateTimeFilter<"Products"> | Date | string
@@ -12517,6 +13308,8 @@ export namespace Prisma {
     price?: SortOrder
     currency?: SortOrder
     discount?: SortOrder
+    info?: SortOrder
+    cpu_info?: SortOrder
     in_stock?: SortOrder
     rating?: SortOrder
     brandId?: SortOrder
@@ -12535,17 +13328,19 @@ export namespace Prisma {
     AND?: ProductsScalarWhereWithAggregatesInput | ProductsScalarWhereWithAggregatesInput[]
     OR?: ProductsScalarWhereWithAggregatesInput[]
     NOT?: ProductsScalarWhereWithAggregatesInput | ProductsScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Products"> | string
+    id?: UuidWithAggregatesFilter<"Products"> | string
     name?: StringWithAggregatesFilter<"Products"> | string
     description?: StringWithAggregatesFilter<"Products"> | string
     slug?: StringWithAggregatesFilter<"Products"> | string
     price?: FloatWithAggregatesFilter<"Products"> | number
     currency?: StringWithAggregatesFilter<"Products"> | string
     discount?: FloatWithAggregatesFilter<"Products"> | number
+    info?: JsonWithAggregatesFilter<"Products">
+    cpu_info?: JsonWithAggregatesFilter<"Products">
     in_stock?: IntWithAggregatesFilter<"Products"> | number
     rating?: FloatWithAggregatesFilter<"Products"> | number
-    brandId?: StringWithAggregatesFilter<"Products"> | string
-    categoryId?: StringWithAggregatesFilter<"Products"> | string
+    brandId?: UuidWithAggregatesFilter<"Products"> | string
+    categoryId?: UuidWithAggregatesFilter<"Products"> | string
     images?: StringNullableListFilter<"Products">
     created_at?: DateTimeWithAggregatesFilter<"Products"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Products"> | Date | string
@@ -12555,8 +13350,8 @@ export namespace Prisma {
     AND?: CartWhereInput | CartWhereInput[]
     OR?: CartWhereInput[]
     NOT?: CartWhereInput | CartWhereInput[]
-    id?: StringFilter<"Cart"> | string
-    userId?: StringFilter<"Cart"> | string
+    id?: UuidFilter<"Cart"> | string
+    userId?: UuidFilter<"Cart"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     items?: CartItemListRelationFilter
   }
@@ -12590,17 +13385,17 @@ export namespace Prisma {
     AND?: CartScalarWhereWithAggregatesInput | CartScalarWhereWithAggregatesInput[]
     OR?: CartScalarWhereWithAggregatesInput[]
     NOT?: CartScalarWhereWithAggregatesInput | CartScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Cart"> | string
-    userId?: StringWithAggregatesFilter<"Cart"> | string
+    id?: UuidWithAggregatesFilter<"Cart"> | string
+    userId?: UuidWithAggregatesFilter<"Cart"> | string
   }
 
   export type CartItemWhereInput = {
     AND?: CartItemWhereInput | CartItemWhereInput[]
     OR?: CartItemWhereInput[]
     NOT?: CartItemWhereInput | CartItemWhereInput[]
-    id?: StringFilter<"CartItem"> | string
-    cartId?: StringFilter<"CartItem"> | string
-    productId?: StringFilter<"CartItem"> | string
+    id?: UuidFilter<"CartItem"> | string
+    cartId?: UuidFilter<"CartItem"> | string
+    productId?: UuidFilter<"CartItem"> | string
     quantity?: IntFilter<"CartItem"> | number
     cart?: XOR<CartScalarRelationFilter, CartWhereInput>
     product?: XOR<ProductsScalarRelationFilter, ProductsWhereInput>
@@ -12620,8 +13415,8 @@ export namespace Prisma {
     AND?: CartItemWhereInput | CartItemWhereInput[]
     OR?: CartItemWhereInput[]
     NOT?: CartItemWhereInput | CartItemWhereInput[]
-    cartId?: StringFilter<"CartItem"> | string
-    productId?: StringFilter<"CartItem"> | string
+    cartId?: UuidFilter<"CartItem"> | string
+    productId?: UuidFilter<"CartItem"> | string
     quantity?: IntFilter<"CartItem"> | number
     cart?: XOR<CartScalarRelationFilter, CartWhereInput>
     product?: XOR<ProductsScalarRelationFilter, ProductsWhereInput>
@@ -12643,9 +13438,9 @@ export namespace Prisma {
     AND?: CartItemScalarWhereWithAggregatesInput | CartItemScalarWhereWithAggregatesInput[]
     OR?: CartItemScalarWhereWithAggregatesInput[]
     NOT?: CartItemScalarWhereWithAggregatesInput | CartItemScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"CartItem"> | string
-    cartId?: StringWithAggregatesFilter<"CartItem"> | string
-    productId?: StringWithAggregatesFilter<"CartItem"> | string
+    id?: UuidWithAggregatesFilter<"CartItem"> | string
+    cartId?: UuidWithAggregatesFilter<"CartItem"> | string
+    productId?: UuidWithAggregatesFilter<"CartItem"> | string
     quantity?: IntWithAggregatesFilter<"CartItem"> | number
   }
 
@@ -12653,7 +13448,7 @@ export namespace Prisma {
     AND?: CategoryWhereInput | CategoryWhereInput[]
     OR?: CategoryWhereInput[]
     NOT?: CategoryWhereInput | CategoryWhereInput[]
-    id?: StringFilter<"Category"> | string
+    id?: UuidFilter<"Category"> | string
     name?: StringFilter<"Category"> | string
     description?: StringFilter<"Category"> | string
     created_at?: DateTimeFilter<"Category"> | Date | string
@@ -12697,7 +13492,7 @@ export namespace Prisma {
     AND?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
     OR?: CategoryScalarWhereWithAggregatesInput[]
     NOT?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Category"> | string
+    id?: UuidWithAggregatesFilter<"Category"> | string
     name?: StringWithAggregatesFilter<"Category"> | string
     description?: StringWithAggregatesFilter<"Category"> | string
     created_at?: DateTimeWithAggregatesFilter<"Category"> | Date | string
@@ -12708,7 +13503,7 @@ export namespace Prisma {
     AND?: BrandWhereInput | BrandWhereInput[]
     OR?: BrandWhereInput[]
     NOT?: BrandWhereInput | BrandWhereInput[]
-    id?: StringFilter<"Brand"> | string
+    id?: UuidFilter<"Brand"> | string
     name?: StringFilter<"Brand"> | string
     description?: StringFilter<"Brand"> | string
     created_at?: DateTimeFilter<"Brand"> | Date | string
@@ -12752,7 +13547,7 @@ export namespace Prisma {
     AND?: BrandScalarWhereWithAggregatesInput | BrandScalarWhereWithAggregatesInput[]
     OR?: BrandScalarWhereWithAggregatesInput[]
     NOT?: BrandScalarWhereWithAggregatesInput | BrandScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Brand"> | string
+    id?: UuidWithAggregatesFilter<"Brand"> | string
     name?: StringWithAggregatesFilter<"Brand"> | string
     description?: StringWithAggregatesFilter<"Brand"> | string
     created_at?: DateTimeWithAggregatesFilter<"Brand"> | Date | string
@@ -12763,15 +13558,15 @@ export namespace Prisma {
     AND?: CommentsWhereInput | CommentsWhereInput[]
     OR?: CommentsWhereInput[]
     NOT?: CommentsWhereInput | CommentsWhereInput[]
-    id?: StringFilter<"Comments"> | string
+    id?: UuidFilter<"Comments"> | string
     title?: StringFilter<"Comments"> | string
     description?: StringFilter<"Comments"> | string
     rating?: FloatFilter<"Comments"> | number
     created_at?: DateTimeFilter<"Comments"> | Date | string
     updated_at?: DateTimeFilter<"Comments"> | Date | string
-    author_id?: StringFilter<"Comments"> | string
-    product_id?: StringFilter<"Comments"> | string
-    cartId?: StringNullableFilter<"Comments"> | string | null
+    author_id?: UuidFilter<"Comments"> | string
+    product_id?: UuidFilter<"Comments"> | string
+    cartId?: UuidNullableFilter<"Comments"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     product?: XOR<ProductsNullableScalarRelationFilter, ProductsWhereInput> | null
   }
@@ -12785,7 +13580,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     author_id?: SortOrder
     product_id?: SortOrder
-    cartId?: SortOrder
+    cartId?: SortOrderInput | SortOrder
     author?: UserOrderByWithRelationInput
     product?: ProductsOrderByWithRelationInput
   }
@@ -12800,9 +13595,9 @@ export namespace Prisma {
     rating?: FloatFilter<"Comments"> | number
     created_at?: DateTimeFilter<"Comments"> | Date | string
     updated_at?: DateTimeFilter<"Comments"> | Date | string
-    author_id?: StringFilter<"Comments"> | string
-    product_id?: StringFilter<"Comments"> | string
-    cartId?: StringNullableFilter<"Comments"> | string | null
+    author_id?: UuidFilter<"Comments"> | string
+    product_id?: UuidFilter<"Comments"> | string
+    cartId?: UuidNullableFilter<"Comments"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     product?: XOR<ProductsNullableScalarRelationFilter, ProductsWhereInput> | null
   }, "id">
@@ -12816,7 +13611,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     author_id?: SortOrder
     product_id?: SortOrder
-    cartId?: SortOrder
+    cartId?: SortOrderInput | SortOrder
     _count?: CommentsCountOrderByAggregateInput
     _avg?: CommentsAvgOrderByAggregateInput
     _max?: CommentsMaxOrderByAggregateInput
@@ -12828,23 +13623,23 @@ export namespace Prisma {
     AND?: CommentsScalarWhereWithAggregatesInput | CommentsScalarWhereWithAggregatesInput[]
     OR?: CommentsScalarWhereWithAggregatesInput[]
     NOT?: CommentsScalarWhereWithAggregatesInput | CommentsScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Comments"> | string
+    id?: UuidWithAggregatesFilter<"Comments"> | string
     title?: StringWithAggregatesFilter<"Comments"> | string
     description?: StringWithAggregatesFilter<"Comments"> | string
     rating?: FloatWithAggregatesFilter<"Comments"> | number
     created_at?: DateTimeWithAggregatesFilter<"Comments"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Comments"> | Date | string
-    author_id?: StringWithAggregatesFilter<"Comments"> | string
-    product_id?: StringWithAggregatesFilter<"Comments"> | string
-    cartId?: StringNullableWithAggregatesFilter<"Comments"> | string | null
+    author_id?: UuidWithAggregatesFilter<"Comments"> | string
+    product_id?: UuidWithAggregatesFilter<"Comments"> | string
+    cartId?: UuidNullableWithAggregatesFilter<"Comments"> | string | null
   }
 
   export type WishlistWhereInput = {
     AND?: WishlistWhereInput | WishlistWhereInput[]
     OR?: WishlistWhereInput[]
     NOT?: WishlistWhereInput | WishlistWhereInput[]
-    id?: StringFilter<"Wishlist"> | string
-    userId?: StringFilter<"Wishlist"> | string
+    id?: UuidFilter<"Wishlist"> | string
+    userId?: UuidFilter<"Wishlist"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     items?: WishlistItemListRelationFilter
   }
@@ -12878,17 +13673,17 @@ export namespace Prisma {
     AND?: WishlistScalarWhereWithAggregatesInput | WishlistScalarWhereWithAggregatesInput[]
     OR?: WishlistScalarWhereWithAggregatesInput[]
     NOT?: WishlistScalarWhereWithAggregatesInput | WishlistScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Wishlist"> | string
-    userId?: StringWithAggregatesFilter<"Wishlist"> | string
+    id?: UuidWithAggregatesFilter<"Wishlist"> | string
+    userId?: UuidWithAggregatesFilter<"Wishlist"> | string
   }
 
   export type WishlistItemWhereInput = {
     AND?: WishlistItemWhereInput | WishlistItemWhereInput[]
     OR?: WishlistItemWhereInput[]
     NOT?: WishlistItemWhereInput | WishlistItemWhereInput[]
-    id?: StringFilter<"WishlistItem"> | string
-    wishlistId?: StringFilter<"WishlistItem"> | string
-    productId?: StringFilter<"WishlistItem"> | string
+    id?: UuidFilter<"WishlistItem"> | string
+    wishlistId?: UuidFilter<"WishlistItem"> | string
+    productId?: UuidFilter<"WishlistItem"> | string
     wishlist?: XOR<WishlistScalarRelationFilter, WishlistWhereInput>
     product?: XOR<ProductsScalarRelationFilter, ProductsWhereInput>
   }
@@ -12906,8 +13701,8 @@ export namespace Prisma {
     AND?: WishlistItemWhereInput | WishlistItemWhereInput[]
     OR?: WishlistItemWhereInput[]
     NOT?: WishlistItemWhereInput | WishlistItemWhereInput[]
-    wishlistId?: StringFilter<"WishlistItem"> | string
-    productId?: StringFilter<"WishlistItem"> | string
+    wishlistId?: UuidFilter<"WishlistItem"> | string
+    productId?: UuidFilter<"WishlistItem"> | string
     wishlist?: XOR<WishlistScalarRelationFilter, WishlistWhereInput>
     product?: XOR<ProductsScalarRelationFilter, ProductsWhereInput>
   }, "id">
@@ -12925,16 +13720,16 @@ export namespace Prisma {
     AND?: WishlistItemScalarWhereWithAggregatesInput | WishlistItemScalarWhereWithAggregatesInput[]
     OR?: WishlistItemScalarWhereWithAggregatesInput[]
     NOT?: WishlistItemScalarWhereWithAggregatesInput | WishlistItemScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"WishlistItem"> | string
-    wishlistId?: StringWithAggregatesFilter<"WishlistItem"> | string
-    productId?: StringWithAggregatesFilter<"WishlistItem"> | string
+    id?: UuidWithAggregatesFilter<"WishlistItem"> | string
+    wishlistId?: UuidWithAggregatesFilter<"WishlistItem"> | string
+    productId?: UuidWithAggregatesFilter<"WishlistItem"> | string
   }
 
   export type GoogleWhereInput = {
     AND?: GoogleWhereInput | GoogleWhereInput[]
     OR?: GoogleWhereInput[]
     NOT?: GoogleWhereInput | GoogleWhereInput[]
-    id?: StringFilter<"Google"> | string
+    id?: UuidFilter<"Google"> | string
     username?: StringFilter<"Google"> | string
     googleID?: StringFilter<"Google"> | string
   }
@@ -12967,7 +13762,7 @@ export namespace Prisma {
     AND?: GoogleScalarWhereWithAggregatesInput | GoogleScalarWhereWithAggregatesInput[]
     OR?: GoogleScalarWhereWithAggregatesInput[]
     NOT?: GoogleScalarWhereWithAggregatesInput | GoogleScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Google"> | string
+    id?: UuidWithAggregatesFilter<"Google"> | string
     username?: StringWithAggregatesFilter<"Google"> | string
     googleID?: StringWithAggregatesFilter<"Google"> | string
   }
@@ -12977,6 +13772,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: CommentsCreateNestedManyWithoutAuthorInput
@@ -12989,6 +13787,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: CommentsUncheckedCreateNestedManyWithoutAuthorInput
@@ -12997,9 +13798,13 @@ export namespace Prisma {
   }
 
   export type UserUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentsUpdateManyWithoutAuthorNestedInput
@@ -13008,9 +13813,13 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentsUncheckedUpdateManyWithoutAuthorNestedInput
@@ -13023,22 +13832,33 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
 
   export type UserUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13051,8 +13871,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     images?: ProductsCreateimagesInput | string[]
@@ -13073,8 +13893,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     brandId: string
@@ -13088,14 +13908,15 @@ export namespace Prisma {
   }
 
   export type ProductsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     images?: ProductsUpdateimagesInput | string[]
@@ -13109,14 +13930,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     brandId?: StringFieldUpdateOperationsInput | string
@@ -13137,8 +13959,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     brandId: string
@@ -13149,14 +13971,15 @@ export namespace Prisma {
   }
 
   export type ProductsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     images?: ProductsUpdateimagesInput | string[]
@@ -13165,14 +13988,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     brandId?: StringFieldUpdateOperationsInput | string
@@ -13195,11 +14019,13 @@ export namespace Prisma {
   }
 
   export type CartUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutCartNestedInput
     items?: CartItemUpdateManyWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
   }
@@ -13210,10 +14036,11 @@ export namespace Prisma {
   }
 
   export type CartUpdateManyMutationInput = {
-
+    id?: StringFieldUpdateOperationsInput | string
   }
 
   export type CartUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -13232,12 +14059,14 @@ export namespace Prisma {
   }
 
   export type CartItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     cart?: CartUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductsUpdateOneRequiredWithoutCartItemNestedInput
   }
 
   export type CartItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     cartId?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
@@ -13251,10 +14080,12 @@ export namespace Prisma {
   }
 
   export type CartItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
   }
 
   export type CartItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     cartId?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
@@ -13279,6 +14110,7 @@ export namespace Prisma {
   }
 
   export type CategoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13287,6 +14119,7 @@ export namespace Prisma {
   }
 
   export type CategoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13303,6 +14136,7 @@ export namespace Prisma {
   }
 
   export type CategoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13310,6 +14144,7 @@ export namespace Prisma {
   }
 
   export type CategoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13335,6 +14170,7 @@ export namespace Prisma {
   }
 
   export type BrandUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13343,6 +14179,7 @@ export namespace Prisma {
   }
 
   export type BrandUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13359,6 +14196,7 @@ export namespace Prisma {
   }
 
   export type BrandUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13366,6 +14204,7 @@ export namespace Prisma {
   }
 
   export type BrandUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13397,6 +14236,7 @@ export namespace Prisma {
   }
 
   export type CommentsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -13408,6 +14248,7 @@ export namespace Prisma {
   }
 
   export type CommentsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -13431,6 +14272,7 @@ export namespace Prisma {
   }
 
   export type CommentsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -13440,6 +14282,7 @@ export namespace Prisma {
   }
 
   export type CommentsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -13463,11 +14306,13 @@ export namespace Prisma {
   }
 
   export type WishlistUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutWishlistsNestedInput
     items?: WishlistItemUpdateManyWithoutWishlistNestedInput
   }
 
   export type WishlistUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     items?: WishlistItemUncheckedUpdateManyWithoutWishlistNestedInput
   }
@@ -13478,10 +14323,11 @@ export namespace Prisma {
   }
 
   export type WishlistUpdateManyMutationInput = {
-
+    id?: StringFieldUpdateOperationsInput | string
   }
 
   export type WishlistUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -13498,11 +14344,13 @@ export namespace Prisma {
   }
 
   export type WishlistItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     wishlist?: WishlistUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductsUpdateOneRequiredWithoutWishlistItemNestedInput
   }
 
   export type WishlistItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     wishlistId?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
   }
@@ -13514,10 +14362,11 @@ export namespace Prisma {
   }
 
   export type WishlistItemUpdateManyMutationInput = {
-
+    id?: StringFieldUpdateOperationsInput | string
   }
 
   export type WishlistItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     wishlistId?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
   }
@@ -13535,11 +14384,13 @@ export namespace Prisma {
   }
 
   export type GoogleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     googleID?: StringFieldUpdateOperationsInput | string
   }
 
   export type GoogleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     googleID?: StringFieldUpdateOperationsInput | string
   }
@@ -13551,13 +14402,27 @@ export namespace Prisma {
   }
 
   export type GoogleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     googleID?: StringFieldUpdateOperationsInput | string
   }
 
   export type GoogleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     googleID?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UuidFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidFilter<$PrismaModel> | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -13573,6 +14438,37 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -13602,6 +14498,11 @@ export namespace Prisma {
     isNot?: CartWhereInput | null
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type CommentsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -13611,6 +14512,9 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     password?: SortOrder
+    is_verified?: SortOrder
+    verify_token?: SortOrder
+    expiration_verify_token?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -13620,6 +14524,9 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     password?: SortOrder
+    is_verified?: SortOrder
+    verify_token?: SortOrder
+    expiration_verify_token?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -13629,8 +14536,26 @@ export namespace Prisma {
     email?: SortOrder
     name?: SortOrder
     password?: SortOrder
+    is_verified?: SortOrder
+    verify_token?: SortOrder
+    expiration_verify_token?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+  }
+
+  export type UuidWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -13649,6 +14574,46 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -13675,28 +14640,28 @@ export namespace Prisma {
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
   }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
 
-  export type InfoCompositeFilter = {
-    equals?: InfoObjectEqualityInput
-    is?: InfoWhereInput
-    isNot?: InfoWhereInput
-  }
-
-  export type InfoObjectEqualityInput = {
-    weight: string
-    color: string
-  }
-
-  export type Cpu_InfoCompositeFilter = {
-    equals?: Cpu_InfoObjectEqualityInput
-    is?: Cpu_InfoWhereInput
-    isNot?: Cpu_InfoWhereInput
-  }
-
-  export type Cpu_InfoObjectEqualityInput = {
-    model: string
-    cores: number
-    threads: number
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -13740,17 +14705,6 @@ export namespace Prisma {
     none?: WishlistItemWhereInput
   }
 
-  export type InfoOrderByInput = {
-    weight?: SortOrder
-    color?: SortOrder
-  }
-
-  export type Cpu_InfoOrderByInput = {
-    model?: SortOrder
-    cores?: SortOrder
-    threads?: SortOrder
-  }
-
   export type CartItemOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -13767,6 +14721,8 @@ export namespace Prisma {
     price?: SortOrder
     currency?: SortOrder
     discount?: SortOrder
+    info?: SortOrder
+    cpu_info?: SortOrder
     in_stock?: SortOrder
     rating?: SortOrder
     brandId?: SortOrder
@@ -13836,6 +14792,32 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -13971,7 +14953,7 @@ export namespace Prisma {
     updated_at?: SortOrder
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
+  export type UuidNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -13979,12 +14961,8 @@ export namespace Prisma {
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
     gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-    isSet?: boolean
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
   }
 
   export type ProductsNullableScalarRelationFilter = {
@@ -14036,7 +15014,7 @@ export namespace Prisma {
     rating?: SortOrder
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -14044,15 +15022,11 @@ export namespace Prisma {
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
     gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-    isSet?: boolean
   }
 
   export type WishlistCountOrderByAggregateInput = {
@@ -14153,6 +15127,18 @@ export namespace Prisma {
     set?: string
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -14225,25 +15211,6 @@ export namespace Prisma {
     update?: XOR<XOR<CartUpdateToOneWithWhereWithoutUserInput, CartUpdateWithoutUserInput>, CartUncheckedUpdateWithoutUserInput>
   }
 
-  export type InfoCreateEnvelopeInput = {
-    set?: InfoCreateInput
-  }
-
-  export type InfoCreateInput = {
-    weight: string
-    color: string
-  }
-
-  export type Cpu_InfoCreateEnvelopeInput = {
-    set?: Cpu_InfoCreateInput
-  }
-
-  export type Cpu_InfoCreateInput = {
-    model: string
-    cores: number
-    threads: number
-  }
-
   export type ProductsCreateimagesInput = {
     set: string[]
   }
@@ -14308,16 +15275,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type InfoUpdateEnvelopeInput = {
-    set?: InfoCreateInput
-    update?: InfoUpdateInput
-  }
-
-  export type Cpu_InfoUpdateEnvelopeInput = {
-    set?: Cpu_InfoCreateInput
-    update?: Cpu_InfoUpdateInput
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -14613,11 +15570,6 @@ export namespace Prisma {
     connect?: ProductsWhereUniqueInput
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-    unset?: boolean
-  }
-
   export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
     create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
     connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
@@ -14630,7 +15582,7 @@ export namespace Prisma {
     create?: XOR<ProductsCreateWithoutCommentsInput, ProductsUncheckedCreateWithoutCommentsInput>
     connectOrCreate?: ProductsCreateOrConnectWithoutCommentsInput
     upsert?: ProductsUpsertWithoutCommentsInput
-    disconnect?: boolean
+    disconnect?: ProductsWhereInput | boolean
     delete?: ProductsWhereInput | boolean
     connect?: ProductsWhereUniqueInput
     update?: XOR<XOR<ProductsUpdateToOneWithWhereWithoutCommentsInput, ProductsUpdateWithoutCommentsInput>, ProductsUncheckedUpdateWithoutCommentsInput>
@@ -14720,6 +15672,17 @@ export namespace Prisma {
     update?: XOR<XOR<ProductsUpdateToOneWithWhereWithoutWishlistItemInput, ProductsUpdateWithoutWishlistItemInput>, ProductsUncheckedUpdateWithoutWishlistItemInput>
   }
 
+  export type NestedUuidFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidFilter<$PrismaModel> | string
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -14734,6 +15697,36 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -14743,6 +15736,31 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -14762,15 +15780,54 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -14798,23 +15855,6 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type InfoWhereInput = {
-    AND?: InfoWhereInput | InfoWhereInput[]
-    OR?: InfoWhereInput[]
-    NOT?: InfoWhereInput | InfoWhereInput[]
-    weight?: StringFilter<"Info"> | string
-    color?: StringFilter<"Info"> | string
-  }
-
-  export type Cpu_InfoWhereInput = {
-    AND?: Cpu_InfoWhereInput | Cpu_InfoWhereInput[]
-    OR?: Cpu_InfoWhereInput[]
-    NOT?: Cpu_InfoWhereInput | Cpu_InfoWhereInput[]
-    model?: StringFilter<"Cpu_Info"> | string
-    cores?: IntFilter<"Cpu_Info"> | number
-    threads?: IntFilter<"Cpu_Info"> | number
-  }
-
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -14829,6 +15869,29 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -14847,7 +15910,7 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
+  export type NestedUuidNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -14855,14 +15918,10 @@ export namespace Prisma {
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
     gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-    isSet?: boolean
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -14870,26 +15929,10 @@ export namespace Prisma {
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
     gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-    isSet?: boolean
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-    isSet?: boolean
   }
 
   export type CommentsCreateWithoutAuthorInput = {
@@ -14921,6 +15964,7 @@ export namespace Prisma {
 
   export type CommentsCreateManyAuthorInputEnvelope = {
     data: CommentsCreateManyAuthorInput | CommentsCreateManyAuthorInput[]
+    skipDuplicates?: boolean
   }
 
   export type WishlistCreateWithoutUserInput = {
@@ -14973,15 +16017,15 @@ export namespace Prisma {
     AND?: CommentsScalarWhereInput | CommentsScalarWhereInput[]
     OR?: CommentsScalarWhereInput[]
     NOT?: CommentsScalarWhereInput | CommentsScalarWhereInput[]
-    id?: StringFilter<"Comments"> | string
+    id?: UuidFilter<"Comments"> | string
     title?: StringFilter<"Comments"> | string
     description?: StringFilter<"Comments"> | string
     rating?: FloatFilter<"Comments"> | number
     created_at?: DateTimeFilter<"Comments"> | Date | string
     updated_at?: DateTimeFilter<"Comments"> | Date | string
-    author_id?: StringFilter<"Comments"> | string
-    product_id?: StringFilter<"Comments"> | string
-    cartId?: StringNullableFilter<"Comments"> | string | null
+    author_id?: UuidFilter<"Comments"> | string
+    product_id?: UuidFilter<"Comments"> | string
+    cartId?: UuidNullableFilter<"Comments"> | string | null
   }
 
   export type WishlistUpsertWithoutUserInput = {
@@ -14996,10 +16040,12 @@ export namespace Prisma {
   }
 
   export type WishlistUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     items?: WishlistItemUpdateManyWithoutWishlistNestedInput
   }
 
   export type WishlistUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     items?: WishlistItemUncheckedUpdateManyWithoutWishlistNestedInput
   }
 
@@ -15015,10 +16061,12 @@ export namespace Prisma {
   }
 
   export type CartUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     items?: CartItemUpdateManyWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     items?: CartItemUncheckedUpdateManyWithoutCartNestedInput
   }
 
@@ -15051,6 +16099,7 @@ export namespace Prisma {
 
   export type CommentsCreateManyProductInputEnvelope = {
     data: CommentsCreateManyProductInput | CommentsCreateManyProductInput[]
+    skipDuplicates?: boolean
   }
 
   export type BrandCreateWithoutProductsInput = {
@@ -15114,6 +16163,7 @@ export namespace Prisma {
 
   export type CartItemCreateManyProductInputEnvelope = {
     data: CartItemCreateManyProductInput | CartItemCreateManyProductInput[]
+    skipDuplicates?: boolean
   }
 
   export type WishlistItemCreateWithoutProductInput = {
@@ -15133,17 +16183,7 @@ export namespace Prisma {
 
   export type WishlistItemCreateManyProductInputEnvelope = {
     data: WishlistItemCreateManyProductInput | WishlistItemCreateManyProductInput[]
-  }
-
-  export type InfoUpdateInput = {
-    weight?: StringFieldUpdateOperationsInput | string
-    color?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type Cpu_InfoUpdateInput = {
-    model?: StringFieldUpdateOperationsInput | string
-    cores?: IntFieldUpdateOperationsInput | number
-    threads?: IntFieldUpdateOperationsInput | number
+    skipDuplicates?: boolean
   }
 
   export type CommentsUpsertWithWhereUniqueWithoutProductInput = {
@@ -15174,6 +16214,7 @@ export namespace Prisma {
   }
 
   export type BrandUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15181,6 +16222,7 @@ export namespace Prisma {
   }
 
   export type BrandUncheckedUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15199,6 +16241,7 @@ export namespace Prisma {
   }
 
   export type CategoryUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15206,6 +16249,7 @@ export namespace Prisma {
   }
 
   export type CategoryUncheckedUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15232,9 +16276,9 @@ export namespace Prisma {
     AND?: CartItemScalarWhereInput | CartItemScalarWhereInput[]
     OR?: CartItemScalarWhereInput[]
     NOT?: CartItemScalarWhereInput | CartItemScalarWhereInput[]
-    id?: StringFilter<"CartItem"> | string
-    cartId?: StringFilter<"CartItem"> | string
-    productId?: StringFilter<"CartItem"> | string
+    id?: UuidFilter<"CartItem"> | string
+    cartId?: UuidFilter<"CartItem"> | string
+    productId?: UuidFilter<"CartItem"> | string
     quantity?: IntFilter<"CartItem"> | number
   }
 
@@ -15258,9 +16302,9 @@ export namespace Prisma {
     AND?: WishlistItemScalarWhereInput | WishlistItemScalarWhereInput[]
     OR?: WishlistItemScalarWhereInput[]
     NOT?: WishlistItemScalarWhereInput | WishlistItemScalarWhereInput[]
-    id?: StringFilter<"WishlistItem"> | string
-    wishlistId?: StringFilter<"WishlistItem"> | string
-    productId?: StringFilter<"WishlistItem"> | string
+    id?: UuidFilter<"WishlistItem"> | string
+    wishlistId?: UuidFilter<"WishlistItem"> | string
+    productId?: UuidFilter<"WishlistItem"> | string
   }
 
   export type UserCreateWithoutCartInput = {
@@ -15268,6 +16312,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: CommentsCreateNestedManyWithoutAuthorInput
@@ -15279,6 +16326,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: CommentsUncheckedCreateNestedManyWithoutAuthorInput
@@ -15309,6 +16359,7 @@ export namespace Prisma {
 
   export type CartItemCreateManyCartInputEnvelope = {
     data: CartItemCreateManyCartInput | CartItemCreateManyCartInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserUpsertWithoutCartInput = {
@@ -15323,9 +16374,13 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutCartInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentsUpdateManyWithoutAuthorNestedInput
@@ -15333,9 +16388,13 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateWithoutCartInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentsUncheckedUpdateManyWithoutAuthorNestedInput
@@ -15381,8 +16440,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     images?: ProductsCreateimagesInput | string[]
@@ -15402,8 +16461,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     brandId: string
@@ -15432,10 +16491,12 @@ export namespace Prisma {
   }
 
   export type CartUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutCartNestedInput
   }
 
   export type CartUncheckedUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -15451,14 +16512,15 @@ export namespace Prisma {
   }
 
   export type ProductsUpdateWithoutCartItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     images?: ProductsUpdateimagesInput | string[]
@@ -15471,14 +16533,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateWithoutCartItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     brandId?: StringFieldUpdateOperationsInput | string
@@ -15498,8 +16561,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     images?: ProductsCreateimagesInput | string[]
@@ -15519,8 +16582,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     brandId: string
@@ -15539,6 +16602,7 @@ export namespace Prisma {
 
   export type ProductsCreateManyCategoryInputEnvelope = {
     data: ProductsCreateManyCategoryInput | ProductsCreateManyCategoryInput[]
+    skipDuplicates?: boolean
   }
 
   export type ProductsUpsertWithWhereUniqueWithoutCategoryInput = {
@@ -15561,17 +16625,19 @@ export namespace Prisma {
     AND?: ProductsScalarWhereInput | ProductsScalarWhereInput[]
     OR?: ProductsScalarWhereInput[]
     NOT?: ProductsScalarWhereInput | ProductsScalarWhereInput[]
-    id?: StringFilter<"Products"> | string
+    id?: UuidFilter<"Products"> | string
     name?: StringFilter<"Products"> | string
     description?: StringFilter<"Products"> | string
     slug?: StringFilter<"Products"> | string
     price?: FloatFilter<"Products"> | number
     currency?: StringFilter<"Products"> | string
     discount?: FloatFilter<"Products"> | number
+    info?: JsonFilter<"Products">
+    cpu_info?: JsonFilter<"Products">
     in_stock?: IntFilter<"Products"> | number
     rating?: FloatFilter<"Products"> | number
-    brandId?: StringFilter<"Products"> | string
-    categoryId?: StringFilter<"Products"> | string
+    brandId?: UuidFilter<"Products"> | string
+    categoryId?: UuidFilter<"Products"> | string
     images?: StringNullableListFilter<"Products">
     created_at?: DateTimeFilter<"Products"> | Date | string
     updated_at?: DateTimeFilter<"Products"> | Date | string
@@ -15585,8 +16651,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     images?: ProductsCreateimagesInput | string[]
@@ -15606,8 +16672,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     categoryId: string
@@ -15626,6 +16692,7 @@ export namespace Prisma {
 
   export type ProductsCreateManyBrandInputEnvelope = {
     data: ProductsCreateManyBrandInput | ProductsCreateManyBrandInput[]
+    skipDuplicates?: boolean
   }
 
   export type ProductsUpsertWithWhereUniqueWithoutBrandInput = {
@@ -15649,6 +16716,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     wishlists?: WishlistCreateNestedOneWithoutUserInput
@@ -15660,6 +16730,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     wishlists?: WishlistUncheckedCreateNestedOneWithoutUserInput
@@ -15679,8 +16752,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     images?: ProductsCreateimagesInput | string[]
@@ -15700,8 +16773,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     brandId: string
@@ -15730,9 +16803,13 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     wishlists?: WishlistUpdateOneWithoutUserNestedInput
@@ -15740,9 +16817,13 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     wishlists?: WishlistUncheckedUpdateOneWithoutUserNestedInput
@@ -15761,14 +16842,15 @@ export namespace Prisma {
   }
 
   export type ProductsUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     images?: ProductsUpdateimagesInput | string[]
@@ -15781,14 +16863,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     brandId?: StringFieldUpdateOperationsInput | string
@@ -15805,6 +16888,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: CommentsCreateNestedManyWithoutAuthorInput
@@ -15816,6 +16902,9 @@ export namespace Prisma {
     email: string
     name: string
     password: string
+    is_verified?: boolean
+    verify_token?: string | null
+    expiration_verify_token?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: CommentsUncheckedCreateNestedManyWithoutAuthorInput
@@ -15844,6 +16933,7 @@ export namespace Prisma {
 
   export type WishlistItemCreateManyWishlistInputEnvelope = {
     data: WishlistItemCreateManyWishlistInput | WishlistItemCreateManyWishlistInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserUpsertWithoutWishlistsInput = {
@@ -15858,9 +16948,13 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutWishlistsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentsUpdateManyWithoutAuthorNestedInput
@@ -15868,9 +16962,13 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateWithoutWishlistsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    is_verified?: BoolFieldUpdateOperationsInput | boolean
+    verify_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expiration_verify_token?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentsUncheckedUpdateManyWithoutAuthorNestedInput
@@ -15916,8 +17014,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     images?: ProductsCreateimagesInput | string[]
@@ -15937,8 +17035,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     brandId: string
@@ -15967,10 +17065,12 @@ export namespace Prisma {
   }
 
   export type WishlistUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutWishlistsNestedInput
   }
 
   export type WishlistUncheckedUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -15986,14 +17086,15 @@ export namespace Prisma {
   }
 
   export type ProductsUpdateWithoutWishlistItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     images?: ProductsUpdateimagesInput | string[]
@@ -16006,14 +17107,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateWithoutWishlistItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     brandId?: StringFieldUpdateOperationsInput | string
@@ -16037,6 +17139,7 @@ export namespace Prisma {
   }
 
   export type CommentsUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -16047,6 +17150,7 @@ export namespace Prisma {
   }
 
   export type CommentsUncheckedUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -16057,6 +17161,7 @@ export namespace Prisma {
   }
 
   export type CommentsUncheckedUpdateManyWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -16089,6 +17194,7 @@ export namespace Prisma {
   }
 
   export type CommentsUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -16099,6 +17205,7 @@ export namespace Prisma {
   }
 
   export type CommentsUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -16109,6 +17216,7 @@ export namespace Prisma {
   }
 
   export type CommentsUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
@@ -16119,29 +17227,35 @@ export namespace Prisma {
   }
 
   export type CartItemUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     cart?: CartUpdateOneRequiredWithoutItemsNestedInput
   }
 
   export type CartItemUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     cartId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
   }
 
   export type CartItemUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     cartId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
   }
 
   export type WishlistItemUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     wishlist?: WishlistUpdateOneRequiredWithoutItemsNestedInput
   }
 
   export type WishlistItemUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     wishlistId?: StringFieldUpdateOperationsInput | string
   }
 
   export type WishlistItemUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
     wishlistId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -16152,16 +17266,19 @@ export namespace Prisma {
   }
 
   export type CartItemUpdateWithoutCartInput = {
+    id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     product?: ProductsUpdateOneRequiredWithoutCartItemNestedInput
   }
 
   export type CartItemUncheckedUpdateWithoutCartInput = {
+    id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
   }
 
   export type CartItemUncheckedUpdateManyWithoutCartInput = {
+    id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
   }
@@ -16174,8 +17291,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     brandId: string
@@ -16185,14 +17302,15 @@ export namespace Prisma {
   }
 
   export type ProductsUpdateWithoutCategoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     images?: ProductsUpdateimagesInput | string[]
@@ -16205,14 +17323,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateWithoutCategoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     brandId?: StringFieldUpdateOperationsInput | string
@@ -16225,14 +17344,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateManyWithoutCategoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     brandId?: StringFieldUpdateOperationsInput | string
@@ -16249,8 +17369,8 @@ export namespace Prisma {
     price: number
     currency: string
     discount: number
-    info: XOR<InfoCreateEnvelopeInput, InfoCreateInput>
-    cpu_info: XOR<Cpu_InfoCreateEnvelopeInput, Cpu_InfoCreateInput>
+    info: JsonNullValueInput | InputJsonValue
+    cpu_info: JsonNullValueInput | InputJsonValue
     in_stock?: number
     rating: number
     categoryId: string
@@ -16260,14 +17380,15 @@ export namespace Prisma {
   }
 
   export type ProductsUpdateWithoutBrandInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     images?: ProductsUpdateimagesInput | string[]
@@ -16280,14 +17401,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateWithoutBrandInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     categoryId?: StringFieldUpdateOperationsInput | string
@@ -16300,14 +17422,15 @@ export namespace Prisma {
   }
 
   export type ProductsUncheckedUpdateManyWithoutBrandInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     discount?: FloatFieldUpdateOperationsInput | number
-    info?: XOR<InfoUpdateEnvelopeInput, InfoCreateInput>
-    cpu_info?: XOR<Cpu_InfoUpdateEnvelopeInput, Cpu_InfoCreateInput>
+    info?: JsonNullValueInput | InputJsonValue
+    cpu_info?: JsonNullValueInput | InputJsonValue
     in_stock?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
     categoryId?: StringFieldUpdateOperationsInput | string
@@ -16322,14 +17445,17 @@ export namespace Prisma {
   }
 
   export type WishlistItemUpdateWithoutWishlistInput = {
+    id?: StringFieldUpdateOperationsInput | string
     product?: ProductsUpdateOneRequiredWithoutWishlistItemNestedInput
   }
 
   export type WishlistItemUncheckedUpdateWithoutWishlistInput = {
+    id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
   }
 
   export type WishlistItemUncheckedUpdateManyWithoutWishlistInput = {
+    id?: StringFieldUpdateOperationsInput | string
     productId?: StringFieldUpdateOperationsInput | string
   }
 

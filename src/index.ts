@@ -2,7 +2,8 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import sesstion from "express-session";
-import MongoStore from "connect-mongo";
+import connectPgSimple from "connect-pg-simple";
+import pg from "pg";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { router as ProductRoutes } from "./routes/products.route";
@@ -41,9 +42,11 @@ app.use(
       secure: process.env.NODE_ENV === "production",
       expires: new Date(Date.now() + 1000 * 60 * 60),
     },
-    store: MongoStore.create({
-      mongoUrl: process.env.DATABASE_URL as string,
-      collectionName: "sessions",
+    store: new (connectPgSimple(sesstion))({
+      pool: new pg.Pool({
+        connectionString: process.env.DATABASE_URL as string,
+      }),
+      tableName: "session",
     }),
   })
 );
