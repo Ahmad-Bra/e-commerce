@@ -31,5 +31,5 @@
 {
     "name":"ahmad brazy",
     "email":"ahmadbrazy20@gmail.com",
-    "password":"ahmadbrazy123"
+    "password":"ahmad12345"
 }

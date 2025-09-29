@@ -4,17 +4,29 @@ import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
 const prisma = new PrismaClient();
 
 class Calculator {
-  public calcTotalPrice(price: number, qty: number) {
-    return price * qty;
+  private price: number;
+  private qty: number;
+  private discount: number;
+  constructor(price: number, qty: number, discount: number) {
+    this.price = price;
+    this.qty = qty;
+    this.discount = discount;
   }
-  public calcDiscount(prodPrice: number, discount: number, qty: number) {
-    const price = this.calcTotalPrice(prodPrice, qty);
-    const finalPrice = price - discount;
+  private calcTotalPrice() {
+    return this.price * this.qty;
+  }
+  private calcDiscount() {
+    const price = this.calcTotalPrice();
+    const finalPrice = price - this.discount;
     return Number(finalPrice.toFixed(2));
   }
 }
 
 export class Cart extends Calculator {
+  constructor(price: number, qty: number, discount: number) {
+    super(price, qty, discount);
+  }
+
   public async getAll(request: Request, respones: Response) {
     // const { search } = request.query;
     const { userId } = request.params;
@@ -62,10 +74,12 @@ export class Cart extends Calculator {
     const { userId } = request.params;
 
     try {
-      let cart = await prisma.cart.findUnique({ where: { userId } });
-      let product = await prisma.products.findUnique({
-        where: { id: productId },
-      });
+      let [cart, product] = await Promise.all([
+        await prisma.cart.findUnique({ where: { userId } }),
+        await prisma.products.findUnique({
+          where: { id: productId },
+        }),
+      ]);
 
       if (!cart) {
         cart = await prisma.cart.create({
@@ -92,15 +106,15 @@ export class Cart extends Calculator {
         }
       }
 
-      // const totalPrice = new Cart().calcTotalPrice(
-      //   foundProduct.price,
-      //   foundProduct.quantity
+      // const total_price = new Cart().calcTotalPrice(
+      //   product.price,
+      //   product.quantity
       // );
 
-      // const priceWithDiscount = new Cart().calcDiscount(
-      //   foundProduct.price,
-      //   foundProduct.discount,
-      //   foundProduct.quantity
+      // const price_with_discount = new Cart().calcDiscount(
+      //   product.price,
+      //   product.discount,
+      //   product.quantity
       // );
 
       respones

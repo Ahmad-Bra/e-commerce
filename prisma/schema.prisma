@@ -62,7 +62,7 @@ model Cart {
 }
 
 model CartItem {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id @default(uuid()) @db.Uuid 
   cart      Cart     @relation(fields: [cartId], references: [id])
   cartId    String   @db.Uuid
   product   Products @relation(fields: [productId], references: [id])

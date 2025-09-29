@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="payment-element"></div>
+    <button id="pay">Pay</button>
+
+
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('pk_test_51Q4kqJRtf8dEYN5z4kQKhcdKHKLW28V2if8NafYySvz4L6Em6g9xVkaTxQdlw2bLF6skAdlDGAFhwMbr6fX4tpqn009O5egCRv');
+
+        async function initCheckout(userId) {
+            const res = await fetch(`/api/payments/create-payment-intent/${userId}`, { method: "POST", credentials: "include", });
+            const { clientSecret } = await res.json();
+
+            const elements = stripe.elements({ clientSecret });
+            const paymentElement = elements.create("payment");
+            paymentElement.mount("#payment-element");
+
+            document.querySelector("#pay").addEventListener("click", async (e) => {
+                e.preventDefault();
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: { return_url: window.location.origin + "/payment-result" },
+                    redirect: window.location.origin + "/success",
+                });
+                if (error) alert(error.message);
+            });
+        }
+        window.addEventListener('load', () => initCheckout('0c10e53d-c1f9-42bd-b1d4-f2a478bf94c3'))
+    </script>
+
+</body>
+
+</html>

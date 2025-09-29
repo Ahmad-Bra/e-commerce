@@ -9,7 +9,6 @@ import "../../stratgies/auth/local.login";
 
 import { User } from "../../controlers/auth/authentication";
 import { userRules } from "../../middleware/api/validation";
-const app = express();
 const userClass = new User();
 export const router = express.Router();
 
@@ -33,11 +32,15 @@ router.post(
 
 router.post("/auth/logout", checkSchema(userRules), userClass.logout);
 
+// Initiate Google OAuth
 router.get(
-  "/oauth/google/redirect",
-  passport.authenticate("google"),
-  userClass.googleOAuth
+  "/oauth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-app.use(passport.initialize());
-app.use(passport.session());
+// OAuth callback
+router.get(
+  "/oauth/google/redirect",
+  passport.authenticate("google", { failureRedirect: "/", session: true }),
+  userClass.googleOAuth
+);

@@ -5,7 +5,8 @@ import { PrismaClient } from "../../generated/prisma/index.js";
 const prisma = new PrismaClient();
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  // Store googleID in the session so deserialize can look it up consistently
+  done(null, user.googleID);
 });
 
 passport.deserializeUser(async (id, done) => {

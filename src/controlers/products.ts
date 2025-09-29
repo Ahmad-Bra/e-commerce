@@ -137,9 +137,25 @@ export class Products {
             take: limit ? Number(limit) : undefined,
             skip: page ? (Number(page) - 1) * Number(limit) : undefined,
             include: {
-              category: true,
-              brand: true,
+              category: {
+                select: {
+                  id: true,
+                  name: true,
+                  description: true,
+                },
+              },
+              brand: {
+                select: {
+                  id: true,
+                  name: true,
+                  description: true,
+                },
+              },
               comments: true,
+            },
+            omit: {
+              categoryId: true,
+              brandId: true,
             },
           }),
         ]);
@@ -161,7 +177,6 @@ export class Products {
         });
         return;
       }
-
       const [total, products] = await Promise.all([
         prisma.products.count(),
         prisma.products.findMany({
@@ -176,9 +191,25 @@ export class Products {
           take: limit ? Number(limit) : undefined,
           skip: page ? (Number(page) - 1) * Number(limit) : undefined,
           include: {
-            category: true,
-            brand: true,
+            category: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+              },
+            },
+            brand: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+              },
+            },
             comments: true,
+          },
+          omit: {
+            categoryId: true,
+            brandId: true,
           },
         }),
       ]);
@@ -190,7 +221,11 @@ export class Products {
         data: products,
         page: page ? Number(page) : undefined,
         nextPage:
-          total > Number(page) * Number(limit) ? Number(page) + 1 : null,
+          total > Number(page) * Number(limit)
+            ? Number(page) + 1
+            : page
+            ? null
+            : undefined,
         limit: limit ? Number(limit) : undefined,
         total: products.length,
       });

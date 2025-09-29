@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import sesstion from "express-session";
 import connectPgSimple from "connect-pg-simple";
+import Stripe from "stripe";
 import pg from "pg";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
@@ -12,13 +13,32 @@ import { router as cartRoutes } from "./routes/cart.route";
 import { router as brandsRoutes } from "./routes/brands.route";
 import { router as authRoutes } from "./routes/auth/authentication.route";
 import { router as wishlistRoutes } from "./routes/wishlist.route";
-
-import { isUserAuthorized } from "./middleware/auth/authentication";
+import { router as paymentsRoutes } from "./routes/payments.route";
+const stripe = new Stripe(process.env.STRIPE_SK as string);
+export default stripe;
+import passport from "passport";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 dotenv.config();
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
+        frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+        connectSrc: ["'self'", "https://api.stripe.com"],
+        imgSrc: ["'self'", "data:", "blob:", "https://*.stripe.com"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'", "https://hooks.stripe.com"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -51,6 +71,10 @@ app.use(
   })
 );
 
+// Initialize passport after session middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.json());
 
 app.get("/", (request: Request, respones: Response) => {
@@ -77,5 +101,8 @@ app.use("/api", cartRoutes);
 
 // wishlist API
 app.use("/api", wishlistRoutes);
+
+// payments API
+app.use("/api", paymentsRoutes);
 
 app.listen(PORT, () => console.log(`listing in port ${PORT}`));
