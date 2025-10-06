@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 export class PaymentsController {
   public async createPaymentIntent(request: Request, response: Response) {
-    const { userId } = request.params as { userId: string };
+    const { user_id: userId } = request.params as { user_id: string };
 
     try {
       const cart = await prisma.cart.findUnique({
@@ -91,4 +91,4 @@ export class PaymentsController {
       return;
     }
   }
-} 
+}

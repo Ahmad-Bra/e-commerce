@@ -187,8 +187,7 @@ exports.Prisma.CommentsScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   author_id: 'author_id',
-  product_id: 'product_id',
-  cartId: 'cartId'
+  product_id: 'product_id'
 };
 
 exports.Prisma.WishlistScalarFieldEnum = {

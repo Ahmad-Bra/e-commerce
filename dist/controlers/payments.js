@@ -19,7 +19,7 @@ const prisma = new index_2.PrismaClient();
 class PaymentsController {
     createPaymentIntent(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { userId } = request.params;
+            const { user_id: userId } = request.params;
             try {
                 const cart = yield prisma.cart.findUnique({
                     where: { userId },

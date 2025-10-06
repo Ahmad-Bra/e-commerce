@@ -10,7 +10,7 @@ class ErrorsValidation {
     errorChecker() {
         const result = (0, express_validator_1.validationResult)(this.request);
         if (!result.isEmpty()) {
-            this.response.status(400).json({ errors: result.array() });
+            return this.response.status(400).json({ errors: result.array() });
         }
     }
 }

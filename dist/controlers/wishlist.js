@@ -16,10 +16,10 @@ const prisma = new index_1.PrismaClient();
 class Wishlist {
     getAll(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { userId } = request.params;
+            const { user_id } = request.params;
             try {
                 const data = yield prisma.wishlist.findUnique({
-                    where: { userId },
+                    where: { userId: user_id },
                     include: { items: { include: { product: true } } },
                 });
                 // set data to redis cache
@@ -36,23 +36,25 @@ class Wishlist {
     }
     create(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { productId } = request.body;
-            const { userId } = request.params;
+            const { product_id } = request.body;
+            const { user_id } = request.params;
             try {
-                let wishlist = yield prisma.wishlist.findUnique({ where: { userId } });
+                let wishlist = yield prisma.wishlist.findUnique({
+                    where: { userId: user_id },
+                });
                 if (!wishlist) {
                     wishlist = yield prisma.wishlist.create({
                         data: {
-                            userId,
+                            userId: user_id,
                             items: {
-                                create: [{ productId }],
+                                create: [{ productId: product_id }],
                             },
                         },
                     });
                 }
                 else {
                     yield prisma.wishlistItem.create({
-                        data: { wishlistId: wishlist.id, productId },
+                        data: { wishlistId: wishlist.id, productId: product_id },
                     });
                 }
                 respones
@@ -69,14 +71,16 @@ class Wishlist {
     }
     delete(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { userId } = request.params;
-            const { productId } = request.body;
+            const { user_id } = request.params;
+            const { product_id } = request.body;
             try {
-                const wishlist = yield prisma.wishlist.findUnique({ where: { userId } });
+                const wishlist = yield prisma.wishlist.findUnique({
+                    where: { userId: user_id },
+                });
                 if (!wishlist)
                     return respones.status(404).json({ error: "Wishlist not found" });
                 yield prisma.wishlistItem.deleteMany({
-                    where: { wishlistId: wishlist.id, productId },
+                    where: { wishlistId: wishlist.id, productId: product_id },
                 });
                 respones
                     .status(200)

@@ -5,16 +5,16 @@ import ErrorsValidation from "../services/ErrorsValidation";
 const prisma = new PrismaClient();
 export class Category {
   public async getCategories(request: Request, respones: Response) {
-    const { search = "", orderBy, page, limit } = request.query;
+    const { search = "", order_by, page, limit } = request.query;
     try {
-      if (search || orderBy) {
+      if (search || order_by) {
         const category = await prisma.category.findMany({
           orderBy: [
             {
-              name: orderBy == "asc" ? "asc" : "desc",
+              name: order_by == "asc" ? "asc" : "desc",
             },
             {
-              id: orderBy == "asc" ? "asc" : "desc",
+              id: order_by == "asc" ? "asc" : "desc",
             },
           ],
           where: {

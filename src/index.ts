@@ -14,6 +14,8 @@ import { router as brandsRoutes } from "./routes/brands.route";
 import { router as authRoutes } from "./routes/auth/authentication.route";
 import { router as wishlistRoutes } from "./routes/wishlist.route";
 import { router as paymentsRoutes } from "./routes/payments.route";
+
+import { router as commentRoutes } from "./routes/comments.route";
 const stripe = new Stripe(process.env.STRIPE_SK as string);
 export default stripe;
 import passport from "passport";
@@ -27,7 +29,11 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
-        frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+        frameSrc: [
+          "'self'",
+          "https://js.stripe.com",
+          "https://hooks.stripe.com",
+        ],
         connectSrc: ["'self'", "https://api.stripe.com"],
         imgSrc: ["'self'", "data:", "blob:", "https://*.stripe.com"],
         styleSrc: ["'self'", "'unsafe-inline'"],
@@ -95,6 +101,9 @@ app.use("/api", brandsRoutes);
 
 // product API
 app.use("/api", ProductRoutes);
+
+// product comments API
+app.use("/api", commentRoutes);
 
 // cart API
 app.use("/api", cartRoutes);

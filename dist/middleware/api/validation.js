@@ -138,12 +138,7 @@ exports.commentsRules = {
         isString: { errorMessage: "author_id must be a string" },
     },
     product_id: {
-        optional: true,
         isString: { errorMessage: "product_id must be a string" },
-    },
-    cartId: {
-        optional: true,
-        isString: { errorMessage: "cartId must be a string" },
     },
 };
 // Brand validation rules

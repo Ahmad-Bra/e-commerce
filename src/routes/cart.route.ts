@@ -5,8 +5,8 @@ import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
 export const router = express.Router();
 const cartClass = new Cart();
 
-router.get("/cart/:userId", redisCacheMiddleware.getCache, cartClass.getAll);
+router.get("/cart/:user_id", redisCacheMiddleware.getCache, cartClass.getAll);
 
-router.post("/cart/:userId", cartClass.create);
+router.post("/cart/:user_id", cartClass.create);
 
-router.delete("/cart/:userId", cartClass.delete);
+router.delete("/cart/:user_id", cartClass.delete);

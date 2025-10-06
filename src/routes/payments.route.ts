@@ -7,7 +7,7 @@ export const router = express.Router();
 const paymentsController = new PaymentsController();
 
 router.post(
-  "/payments/create-payment-intent/:userId",
+  "/payments/create-payment-intent/:user_id",
   isUserAuthorized,
   paymentsController.createPaymentIntent
-); 
+);

@@ -103,25 +103,25 @@ class Products {
     }
     getProducts(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { search = "", orderBy, page, limit, byCategory, byBrand, } = request.query;
+            const { search = "", order_by, page, limit, by_category, by_brand, } = request.query;
             try {
-                if (search || orderBy || byCategory || byBrand) {
+                if (search || order_by || by_category || by_brand) {
                     const [total, products] = yield Promise.all([
                         prisma.products.count(),
                         prisma.products.findMany({
                             orderBy: [
                                 {
-                                    name: orderBy == "asc" ? "asc" : "desc",
+                                    name: order_by == "asc" ? "asc" : "desc",
                                 },
                                 {
-                                    id: orderBy == "asc" ? "asc" : "desc",
+                                    id: order_by == "asc" ? "asc" : "desc",
                                 },
                             ],
                             where: {
-                                categoryId: byCategory
-                                    ? byCategory
+                                categoryId: by_category
+                                    ? by_category
                                     : undefined,
-                                brandId: byBrand ? byBrand : undefined,
+                                brandId: by_brand ? by_brand : undefined,
                                 OR: [
                                     {
                                         description: {
@@ -165,6 +165,7 @@ class Products {
                     // set data to redis cache
                     redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, products);
                     respones.status(200).json({
+                        success: true,
                         data: products,
                         page: page ? Number(page) : undefined,
                         nextPage: total > Number(page) * Number(limit)
@@ -216,6 +217,7 @@ class Products {
                 // set data to redis cache
                 redis_middleware_1.redisCacheMiddleware.setCache(request.originalUrl, products);
                 respones.status(200).json({
+                    success: true,
                     data: products,
                     page: page ? Number(page) : undefined,
                     nextPage: total > Number(page) * Number(limit)
@@ -266,7 +268,7 @@ class Products {
             const body = request.body;
             try {
                 const createdProduct = yield prisma.products.create({
-                    data: Object.assign({}, body),
+                    data: Object.assign(Object.assign({}, body), { currency: "usd" }),
                     include: {
                         category: true,
                         brand: true,
@@ -278,7 +280,7 @@ class Products {
             }
             catch (error) {
                 console.log(error);
-                respones.status(500).json({ messgae: error });
+                respones.status(500).json({ messgae: error.message });
                 return;
             }
         });
@@ -291,7 +293,7 @@ class Products {
             try {
                 const updatedProduct = yield prisma.products.update({
                     where: { id },
-                    data: Object.assign({}, body),
+                    data: Object.assign(Object.assign({}, body), { updated_at: new Date().toISOString() }),
                 });
                 respones.status(200).json({
                     message: "your product updated successfuly",

@@ -94,31 +94,31 @@ export class Products {
   public async getProducts(request: Request, respones: Response) {
     const {
       search = "",
-      orderBy,
+      order_by,
       page,
       limit,
-      byCategory,
-      byBrand,
+      by_category,
+      by_brand,
     } = request.query;
 
     try {
-      if (search || orderBy || byCategory || byBrand) {
+      if (search || order_by || by_category || by_brand) {
         const [total, products] = await Promise.all([
           prisma.products.count(),
           prisma.products.findMany({
             orderBy: [
               {
-                name: orderBy == "asc" ? "asc" : "desc",
+                name: order_by == "asc" ? "asc" : "desc",
               },
               {
-                id: orderBy == "asc" ? "asc" : "desc",
+                id: order_by == "asc" ? "asc" : "desc",
               },
             ],
             where: {
-              categoryId: (byCategory as string)
-                ? (byCategory as string)
+              categoryId: (by_category as string)
+                ? (by_category as string)
                 : undefined,
-              brandId: (byBrand as string) ? (byBrand as string) : undefined,
+              brandId: (by_brand as string) ? (by_brand as string) : undefined,
               OR: [
                 {
                   description: {
@@ -164,6 +164,7 @@ export class Products {
         redisCacheMiddleware.setCache(request.originalUrl, products);
 
         respones.status(200).json({
+          success: true,
           data: products,
           page: page ? Number(page) : undefined,
           nextPage:
@@ -218,6 +219,7 @@ export class Products {
       redisCacheMiddleware.setCache(request.originalUrl, products);
 
       respones.status(200).json({
+        success: true,
         data: products,
         page: page ? Number(page) : undefined,
         nextPage:
@@ -269,6 +271,7 @@ export class Products {
       const createdProduct = await prisma.products.create({
         data: {
           ...body,
+          currency: "usd",
         },
         include: {
           category: true,
@@ -280,7 +283,7 @@ export class Products {
       return;
     } catch (error) {
       console.log(error);
-      respones.status(500).json({ messgae: error });
+      respones.status(500).json({ messgae: (error as Error).message });
       return;
     }
   }
@@ -294,6 +297,7 @@ export class Products {
         where: { id },
         data: {
           ...body,
+          updated_at: new Date().toISOString(),
         },
       });
 

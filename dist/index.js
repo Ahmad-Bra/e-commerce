@@ -19,6 +19,7 @@ const brands_route_1 = require("./routes/brands.route");
 const authentication_route_1 = require("./routes/auth/authentication.route");
 const wishlist_route_1 = require("./routes/wishlist.route");
 const payments_route_1 = require("./routes/payments.route");
+const comments_route_1 = require("./routes/comments.route");
 const stripe = new stripe_1.default(process.env.STRIPE_SK);
 exports.default = stripe;
 const passport_1 = __importDefault(require("passport"));
@@ -30,7 +31,11 @@ app.use((0, helmet_1.default)({
         directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
-            frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+            frameSrc: [
+                "'self'",
+                "https://js.stripe.com",
+                "https://hooks.stripe.com",
+            ],
             connectSrc: ["'self'", "https://api.stripe.com"],
             imgSrc: ["'self'", "data:", "blob:", "https://*.stripe.com"],
             styleSrc: ["'self'", "'unsafe-inline'"],
@@ -84,6 +89,8 @@ app.use("/api", categories_route_1.router);
 app.use("/api", brands_route_1.router);
 // product API
 app.use("/api", products_route_1.router);
+// product comments API
+app.use("/api", comments_route_1.router);
 // cart API
 app.use("/api", cart_route_1.router);
 // wishlist API

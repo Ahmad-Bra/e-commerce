@@ -10,4 +10,4 @@ const payments_1 = require("../controlers/payments");
 const authentication_1 = require("../middleware/auth/authentication");
 exports.router = express_1.default.Router();
 const paymentsController = new payments_1.PaymentsController();
-exports.router.post("/payments/create-payment-intent/:userId", authentication_1.isUserAuthorized, paymentsController.createPaymentIntent);
+exports.router.post("/payments/create-payment-intent/:user_id", authentication_1.isUserAuthorized, paymentsController.createPaymentIntent);

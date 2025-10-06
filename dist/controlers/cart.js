@@ -35,7 +35,7 @@ class Cart extends Calculator {
     getAll(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
             // const { search } = request.query;
-            const { userId } = request.params;
+            const { user_id: userId } = request.params;
             try {
                 // if (search) {
                 //   const data = await prisma.cart.findMany({
@@ -77,13 +77,13 @@ class Cart extends Calculator {
     }
     create(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { productId, quantity } = request.body;
+            const { product_id, quantity } = request.body;
             const { userId } = request.params;
             try {
                 let [cart, product] = yield Promise.all([
                     yield prisma.cart.findUnique({ where: { userId } }),
                     yield prisma.products.findUnique({
-                        where: { id: productId },
+                        where: { id: product_id },
                     }),
                 ]);
                 if (!cart) {
@@ -91,14 +91,14 @@ class Cart extends Calculator {
                         data: {
                             userId,
                             items: {
-                                create: [{ productId, quantity }],
+                                create: [{ productId: product_id, quantity }],
                             },
                         },
                     });
                 }
                 else {
                     const existingItem = yield prisma.cartItem.findFirst({
-                        where: { cartId: cart.id, productId },
+                        where: { cartId: cart.id, productId: product_id },
                     });
                     if (existingItem) {
                         yield prisma.cartItem.update({
@@ -108,7 +108,7 @@ class Cart extends Calculator {
                     }
                     else {
                         yield prisma.cartItem.create({
-                            data: { cartId: cart.id, productId, quantity },
+                            data: { cartId: cart.id, productId: product_id, quantity },
                         });
                     }
                 }
@@ -136,13 +136,13 @@ class Cart extends Calculator {
     delete(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
             const { userId } = request.params;
-            const { productId } = request.body;
+            const { product_id } = request.body;
             try {
                 const cart = yield prisma.cart.findUnique({ where: { userId } });
                 if (!cart)
                     return respones.status(404).json({ error: "Cart not found" });
                 yield prisma.cartItem.deleteMany({
-                    where: { cartId: cart.id, productId },
+                    where: { cartId: cart.id, productId: product_id },
                 });
                 respones
                     .status(200)

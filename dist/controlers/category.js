@@ -20,16 +20,16 @@ const prisma = new index_1.PrismaClient();
 class Category {
     getCategories(request, respones) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { search = "", orderBy, page, limit } = request.query;
+            const { search = "", order_by, page, limit } = request.query;
             try {
-                if (search || orderBy) {
+                if (search || order_by) {
                     const category = yield prisma.category.findMany({
                         orderBy: [
                             {
-                                name: orderBy == "asc" ? "asc" : "desc",
+                                name: order_by == "asc" ? "asc" : "desc",
                             },
                             {
-                                id: orderBy == "asc" ? "asc" : "desc",
+                                id: order_by == "asc" ? "asc" : "desc",
                             },
                         ],
                         where: {

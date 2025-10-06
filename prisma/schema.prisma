@@ -97,9 +97,8 @@ model Comments {
   updated_at  DateTime  @default(now())
   author      User      @relation(fields: [author_id], references: [id])
   author_id   String    @db.Uuid
-  product     Products? @relation(fields: [product_id], references: [id])
+  product     Products @relation(fields: [product_id], references: [id])
   product_id  String    @db.Uuid
-  cartId      String?   @db.Uuid
 }
 
 model Wishlist {

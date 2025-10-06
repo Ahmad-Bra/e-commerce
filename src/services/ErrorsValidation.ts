@@ -12,7 +12,7 @@ export default class ErrorsValidation {
   public errorChecker() {
     const result = validationResult(this.request);
     if (!result.isEmpty()) {
-      this.response.status(400).json({ errors: result.array() });
+      return this.response.status(400).json({ errors: result.array() });
     }
   }
 }

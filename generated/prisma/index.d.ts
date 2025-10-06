@@ -8684,7 +8684,6 @@ export namespace Prisma {
     updated_at: Date | null
     author_id: string | null
     product_id: string | null
-    cartId: string | null
   }
 
   export type CommentsMaxAggregateOutputType = {
@@ -8696,7 +8695,6 @@ export namespace Prisma {
     updated_at: Date | null
     author_id: string | null
     product_id: string | null
-    cartId: string | null
   }
 
   export type CommentsCountAggregateOutputType = {
@@ -8708,7 +8706,6 @@ export namespace Prisma {
     updated_at: number
     author_id: number
     product_id: number
-    cartId: number
     _all: number
   }
 
@@ -8730,7 +8727,6 @@ export namespace Prisma {
     updated_at?: true
     author_id?: true
     product_id?: true
-    cartId?: true
   }
 
   export type CommentsMaxAggregateInputType = {
@@ -8742,7 +8738,6 @@ export namespace Prisma {
     updated_at?: true
     author_id?: true
     product_id?: true
-    cartId?: true
   }
 
   export type CommentsCountAggregateInputType = {
@@ -8754,7 +8749,6 @@ export namespace Prisma {
     updated_at?: true
     author_id?: true
     product_id?: true
-    cartId?: true
     _all?: true
   }
 
@@ -8853,7 +8847,6 @@ export namespace Prisma {
     updated_at: Date
     author_id: string
     product_id: string
-    cartId: string | null
     _count: CommentsCountAggregateOutputType | null
     _avg: CommentsAvgAggregateOutputType | null
     _sum: CommentsSumAggregateOutputType | null
@@ -8884,9 +8877,8 @@ export namespace Prisma {
     updated_at?: boolean
     author_id?: boolean
     product_id?: boolean
-    cartId?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
-    product?: boolean | Comments$productArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comments"]>
 
   export type CommentsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8898,9 +8890,8 @@ export namespace Prisma {
     updated_at?: boolean
     author_id?: boolean
     product_id?: boolean
-    cartId?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
-    product?: boolean | Comments$productArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comments"]>
 
   export type CommentsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8912,9 +8903,8 @@ export namespace Prisma {
     updated_at?: boolean
     author_id?: boolean
     product_id?: boolean
-    cartId?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
-    product?: boolean | Comments$productArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comments"]>
 
   export type CommentsSelectScalar = {
@@ -8926,28 +8916,27 @@ export namespace Prisma {
     updated_at?: boolean
     author_id?: boolean
     product_id?: boolean
-    cartId?: boolean
   }
 
-  export type CommentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "rating" | "created_at" | "updated_at" | "author_id" | "product_id" | "cartId", ExtArgs["result"]["comments"]>
+  export type CommentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "rating" | "created_at" | "updated_at" | "author_id" | "product_id", ExtArgs["result"]["comments"]>
   export type CommentsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
-    product?: boolean | Comments$productArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
   }
   export type CommentsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
-    product?: boolean | Comments$productArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
   }
   export type CommentsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
-    product?: boolean | Comments$productArgs<ExtArgs>
+    product?: boolean | ProductsDefaultArgs<ExtArgs>
   }
 
   export type $CommentsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Comments"
     objects: {
       author: Prisma.$UserPayload<ExtArgs>
-      product: Prisma.$ProductsPayload<ExtArgs> | null
+      product: Prisma.$ProductsPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8958,7 +8947,6 @@ export namespace Prisma {
       updated_at: Date
       author_id: string
       product_id: string
-      cartId: string | null
     }, ExtArgs["result"]["comments"]>
     composites: {}
   }
@@ -9354,7 +9342,7 @@ export namespace Prisma {
   export interface Prisma__CommentsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    product<T extends Comments$productArgs<ExtArgs> = {}>(args?: Subset<T, Comments$productArgs<ExtArgs>>): Prisma__ProductsClient<$Result.GetResult<Prisma.$ProductsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    product<T extends ProductsDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductsDefaultArgs<ExtArgs>>): Prisma__ProductsClient<$Result.GetResult<Prisma.$ProductsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9392,7 +9380,6 @@ export namespace Prisma {
     readonly updated_at: FieldRef<"Comments", 'DateTime'>
     readonly author_id: FieldRef<"Comments", 'String'>
     readonly product_id: FieldRef<"Comments", 'String'>
-    readonly cartId: FieldRef<"Comments", 'String'>
   }
     
 
@@ -9786,25 +9773,6 @@ export namespace Prisma {
      * Limit how many Comments to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Comments.product
-   */
-  export type Comments$productArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Products
-     */
-    select?: ProductsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Products
-     */
-    omit?: ProductsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProductsInclude<ExtArgs> | null
-    where?: ProductsWhereInput
   }
 
   /**
@@ -12983,8 +12951,7 @@ export namespace Prisma {
     created_at: 'created_at',
     updated_at: 'updated_at',
     author_id: 'author_id',
-    product_id: 'product_id',
-    cartId: 'cartId'
+    product_id: 'product_id'
   };
 
   export type CommentsScalarFieldEnum = (typeof CommentsScalarFieldEnum)[keyof typeof CommentsScalarFieldEnum]
@@ -13566,9 +13533,8 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Comments"> | Date | string
     author_id?: UuidFilter<"Comments"> | string
     product_id?: UuidFilter<"Comments"> | string
-    cartId?: UuidNullableFilter<"Comments"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
-    product?: XOR<ProductsNullableScalarRelationFilter, ProductsWhereInput> | null
+    product?: XOR<ProductsScalarRelationFilter, ProductsWhereInput>
   }
 
   export type CommentsOrderByWithRelationInput = {
@@ -13580,7 +13546,6 @@ export namespace Prisma {
     updated_at?: SortOrder
     author_id?: SortOrder
     product_id?: SortOrder
-    cartId?: SortOrderInput | SortOrder
     author?: UserOrderByWithRelationInput
     product?: ProductsOrderByWithRelationInput
   }
@@ -13597,9 +13562,8 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Comments"> | Date | string
     author_id?: UuidFilter<"Comments"> | string
     product_id?: UuidFilter<"Comments"> | string
-    cartId?: UuidNullableFilter<"Comments"> | string | null
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
-    product?: XOR<ProductsNullableScalarRelationFilter, ProductsWhereInput> | null
+    product?: XOR<ProductsScalarRelationFilter, ProductsWhereInput>
   }, "id">
 
   export type CommentsOrderByWithAggregationInput = {
@@ -13611,7 +13575,6 @@ export namespace Prisma {
     updated_at?: SortOrder
     author_id?: SortOrder
     product_id?: SortOrder
-    cartId?: SortOrderInput | SortOrder
     _count?: CommentsCountOrderByAggregateInput
     _avg?: CommentsAvgOrderByAggregateInput
     _max?: CommentsMaxOrderByAggregateInput
@@ -13631,7 +13594,6 @@ export namespace Prisma {
     updated_at?: DateTimeWithAggregatesFilter<"Comments"> | Date | string
     author_id?: UuidWithAggregatesFilter<"Comments"> | string
     product_id?: UuidWithAggregatesFilter<"Comments"> | string
-    cartId?: UuidNullableWithAggregatesFilter<"Comments"> | string | null
   }
 
   export type WishlistWhereInput = {
@@ -14218,9 +14180,8 @@ export namespace Prisma {
     rating: number
     created_at?: Date | string
     updated_at?: Date | string
-    cartId?: string | null
     author: UserCreateNestedOneWithoutCommentsInput
-    product?: ProductsCreateNestedOneWithoutCommentsInput
+    product: ProductsCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentsUncheckedCreateInput = {
@@ -14232,7 +14193,6 @@ export namespace Prisma {
     updated_at?: Date | string
     author_id: string
     product_id: string
-    cartId?: string | null
   }
 
   export type CommentsUpdateInput = {
@@ -14242,9 +14202,8 @@ export namespace Prisma {
     rating?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutCommentsNestedInput
-    product?: ProductsUpdateOneWithoutCommentsNestedInput
+    product?: ProductsUpdateOneRequiredWithoutCommentsNestedInput
   }
 
   export type CommentsUncheckedUpdateInput = {
@@ -14256,7 +14215,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     author_id?: StringFieldUpdateOperationsInput | string
     product_id?: StringFieldUpdateOperationsInput | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommentsCreateManyInput = {
@@ -14268,7 +14226,6 @@ export namespace Prisma {
     updated_at?: Date | string
     author_id: string
     product_id: string
-    cartId?: string | null
   }
 
   export type CommentsUpdateManyMutationInput = {
@@ -14278,7 +14235,6 @@ export namespace Prisma {
     rating?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommentsUncheckedUpdateManyInput = {
@@ -14290,7 +14246,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     author_id?: StringFieldUpdateOperationsInput | string
     product_id?: StringFieldUpdateOperationsInput | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WishlistCreateInput = {
@@ -14953,23 +14908,6 @@ export namespace Prisma {
     updated_at?: SortOrder
   }
 
-  export type UuidNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type ProductsNullableScalarRelationFilter = {
-    is?: ProductsWhereInput | null
-    isNot?: ProductsWhereInput | null
-  }
-
   export type CommentsCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
@@ -14979,7 +14917,6 @@ export namespace Prisma {
     updated_at?: SortOrder
     author_id?: SortOrder
     product_id?: SortOrder
-    cartId?: SortOrder
   }
 
   export type CommentsAvgOrderByAggregateInput = {
@@ -14995,7 +14932,6 @@ export namespace Prisma {
     updated_at?: SortOrder
     author_id?: SortOrder
     product_id?: SortOrder
-    cartId?: SortOrder
   }
 
   export type CommentsMinOrderByAggregateInput = {
@@ -15007,26 +14943,10 @@ export namespace Prisma {
     updated_at?: SortOrder
     author_id?: SortOrder
     product_id?: SortOrder
-    cartId?: SortOrder
   }
 
   export type CommentsSumOrderByAggregateInput = {
     rating?: SortOrder
-  }
-
-  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type WishlistCountOrderByAggregateInput = {
@@ -15578,12 +15498,10 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentsInput, UserUpdateWithoutCommentsInput>, UserUncheckedUpdateWithoutCommentsInput>
   }
 
-  export type ProductsUpdateOneWithoutCommentsNestedInput = {
+  export type ProductsUpdateOneRequiredWithoutCommentsNestedInput = {
     create?: XOR<ProductsCreateWithoutCommentsInput, ProductsUncheckedCreateWithoutCommentsInput>
     connectOrCreate?: ProductsCreateOrConnectWithoutCommentsInput
     upsert?: ProductsUpsertWithoutCommentsInput
-    disconnect?: ProductsWhereInput | boolean
-    delete?: ProductsWhereInput | boolean
     connect?: ProductsWhereUniqueInput
     update?: XOR<XOR<ProductsUpdateToOneWithWhereWithoutCommentsInput, ProductsUpdateWithoutCommentsInput>, ProductsUncheckedUpdateWithoutCommentsInput>
   }
@@ -15910,31 +15828,6 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type NestedUuidNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
   export type CommentsCreateWithoutAuthorInput = {
     id?: string
     title: string
@@ -15942,8 +15835,7 @@ export namespace Prisma {
     rating: number
     created_at?: Date | string
     updated_at?: Date | string
-    cartId?: string | null
-    product?: ProductsCreateNestedOneWithoutCommentsInput
+    product: ProductsCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentsUncheckedCreateWithoutAuthorInput = {
@@ -15954,7 +15846,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     product_id: string
-    cartId?: string | null
   }
 
   export type CommentsCreateOrConnectWithoutAuthorInput = {
@@ -16025,7 +15916,6 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Comments"> | Date | string
     author_id?: UuidFilter<"Comments"> | string
     product_id?: UuidFilter<"Comments"> | string
-    cartId?: UuidNullableFilter<"Comments"> | string | null
   }
 
   export type WishlistUpsertWithoutUserInput = {
@@ -16077,7 +15967,6 @@ export namespace Prisma {
     rating: number
     created_at?: Date | string
     updated_at?: Date | string
-    cartId?: string | null
     author: UserCreateNestedOneWithoutCommentsInput
   }
 
@@ -16089,7 +15978,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     author_id: string
-    cartId?: string | null
   }
 
   export type CommentsCreateOrConnectWithoutProductInput = {
@@ -17135,7 +17023,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     product_id: string
-    cartId?: string | null
   }
 
   export type CommentsUpdateWithoutAuthorInput = {
@@ -17145,8 +17032,7 @@ export namespace Prisma {
     rating?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
-    product?: ProductsUpdateOneWithoutCommentsNestedInput
+    product?: ProductsUpdateOneRequiredWithoutCommentsNestedInput
   }
 
   export type CommentsUncheckedUpdateWithoutAuthorInput = {
@@ -17157,7 +17043,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     product_id?: StringFieldUpdateOperationsInput | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommentsUncheckedUpdateManyWithoutAuthorInput = {
@@ -17168,7 +17053,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     product_id?: StringFieldUpdateOperationsInput | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommentsCreateManyProductInput = {
@@ -17179,7 +17063,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     author_id: string
-    cartId?: string | null
   }
 
   export type CartItemCreateManyProductInput = {
@@ -17200,7 +17083,6 @@ export namespace Prisma {
     rating?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
     author?: UserUpdateOneRequiredWithoutCommentsNestedInput
   }
 
@@ -17212,7 +17094,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     author_id?: StringFieldUpdateOperationsInput | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommentsUncheckedUpdateManyWithoutProductInput = {
@@ -17223,7 +17104,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     author_id?: StringFieldUpdateOperationsInput | string
-    cartId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CartItemUpdateWithoutProductInput = {

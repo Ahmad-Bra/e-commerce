@@ -29,7 +29,7 @@ export class Cart extends Calculator {
 
   public async getAll(request: Request, respones: Response) {
     // const { search } = request.query;
-    const { userId } = request.params;
+    const { user_id: userId } = request.params;
 
     try {
       // if (search) {
@@ -70,14 +70,14 @@ export class Cart extends Calculator {
     }
   }
   public async create(request: Request, respones: Response) {
-    const { productId, quantity } = request.body;
+    const { product_id, quantity } = request.body;
     const { userId } = request.params;
 
     try {
       let [cart, product] = await Promise.all([
         await prisma.cart.findUnique({ where: { userId } }),
         await prisma.products.findUnique({
-          where: { id: productId },
+          where: { id: product_id },
         }),
       ]);
 
@@ -86,13 +86,13 @@ export class Cart extends Calculator {
           data: {
             userId,
             items: {
-              create: [{ productId, quantity }],
+              create: [{ productId: product_id, quantity }],
             },
           },
         });
       } else {
         const existingItem = await prisma.cartItem.findFirst({
-          where: { cartId: cart.id, productId },
+          where: { cartId: cart.id, productId: product_id },
         });
         if (existingItem) {
           await prisma.cartItem.update({
@@ -101,7 +101,7 @@ export class Cart extends Calculator {
           });
         } else {
           await prisma.cartItem.create({
-            data: { cartId: cart.id, productId, quantity },
+            data: { cartId: cart.id, productId: product_id, quantity },
           });
         }
       }
@@ -130,13 +130,13 @@ export class Cart extends Calculator {
 
   public async delete(request: Request, respones: Response) {
     const { userId } = request.params;
-    const { productId } = request.body;
+    const { product_id } = request.body;
 
     try {
       const cart = await prisma.cart.findUnique({ where: { userId } });
       if (!cart) return respones.status(404).json({ error: "Cart not found" });
       await prisma.cartItem.deleteMany({
-        where: { cartId: cart.id, productId },
+        where: { cartId: cart.id, productId: product_id },
       });
 
       respones
