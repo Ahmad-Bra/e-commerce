@@ -146,7 +146,19 @@ exports.Prisma.ProductsScalarFieldEnum = {
   rating: 'rating',
   brandId: 'brandId',
   categoryId: 'categoryId',
-  images: 'images',
+  mainImageUrl: 'mainImageUrl',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.ImageScalarFieldEnum = {
+  id: 'id',
+  filename: 'filename',
+  path: 'path',
+  url: 'url',
+  mimetype: 'mimetype',
+  size: 'size',
+  productId: 'productId',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };
@@ -236,6 +248,7 @@ exports.Prisma.JsonNullValueFilter = {
 exports.Prisma.ModelName = {
   User: 'User',
   Products: 'Products',
+  Image: 'Image',
   Cart: 'Cart',
   CartItem: 'CartItem',
   Category: 'Category',

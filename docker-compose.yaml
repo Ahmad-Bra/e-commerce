@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - DATABASE_URL=${DATABASE_URL}
+      - PORT=${PORT}
+      - LOCAL_URL=${LOCAL_URL}
+      - BASE_URL=${BASE_URL}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - STRIPE_SK=${STRIPE_SK}
+      - STRIPE_PK=${STRIPE_PK}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - SECRET_KEY=${SECRET_KEY}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - LOCALECALLBACKURL=${LOCALECALLBACKURL}
+      - PRODCALLBACKURL=${PRODCALLBACKURL}
+      - MAILTRAP_TOKEN=${MAILTRAP_TOKEN}
+    depends_on:
+      - db
+      - redis
+      
+    volumes:
+      - ./uploads:/app/uploads
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: lhhexjuTNbvNtzsIqbvFNkITeFDZvibh
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+volumes:
+  pgdata:

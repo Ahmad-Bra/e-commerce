@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+dist
+tmp
+uploads
+.env
+.git
+.gitignore
+Dockerfile*
+*.md
+*.tsbuildinfo
+coverage
+prisma/dev.db
+prisma/*.sqlite
+prisma/migrations_dev

@@ -7,7 +7,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
-  binaryTargets = ["windows", "debian-openssl-1.1.x", "debian-openssl-3.0.x"] 
+  binaryTargets = ["windows", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -47,11 +47,25 @@ model Products {
   category     Category @relation(fields: [categoryId], references: [id])
   brandId      String   @db.Uuid
   categoryId   String   @db.Uuid
-  images       String[]
+  mainImageUrl String?  // Main product image URL
+  images       Image[]  // Relation to Image model
   created_at   DateTime @default(now())
   updated_at   DateTime @default(now())
   CartItem     CartItem[]
   WishlistItem WishlistItem[]
+}
+
+model Image {
+  id          String   @id @default(uuid()) @db.Uuid
+  filename    String   // Original filename
+  path        String   // File path on disk
+  url         String   // Public URL
+  mimetype    String   // File type
+  size        Int      // File size in bytes
+  product     Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId   String   @db.Uuid
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
 }
 
 model Cart {

@@ -76,7 +76,19 @@ export class Products {
               rating: Number((3 + (i % 3) * 0.7).toFixed(1)),
               brand: { connect: { id: brand.id } },
               category: { connect: { id: category.id } },
-              images: [`/images/${slug}-1.png`],
+              images: {
+                create: [
+                  {
+                    filename: `${slug}-1.png`,
+                    path: `uploads/products/${slug}-1.png`,
+                    url: `${
+                      process.env.BASE_URL || "http://localhost:3000"
+                    }/uploads/products/${slug}-1.png`,
+                    mimetype: "image/png",
+                    size: 0,
+                  },
+                ],
+              },
             },
           });
         }
@@ -152,6 +164,7 @@ export class Products {
                 },
               },
               comments: true,
+              images: true,
             },
             omit: {
               categoryId: true,
@@ -206,6 +219,7 @@ export class Products {
                 description: true,
               },
             },
+            images: true,
             comments: true,
           },
           omit: {

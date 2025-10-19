@@ -51,7 +51,6 @@ class Comments {
       if (!comments) {
         return res.status(404).json({ message: "Comment not found" });
       }
-
       redisCacheMiddleware.setCache(req.originalUrl, comments);
 
       return res.json({

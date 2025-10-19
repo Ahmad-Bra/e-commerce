@@ -14,6 +14,7 @@ import { router as brandsRoutes } from "./routes/brands.route";
 import { router as authRoutes } from "./routes/auth/authentication.route";
 import { router as wishlistRoutes } from "./routes/wishlist.route";
 import { router as paymentsRoutes } from "./routes/payments.route";
+import { router as imagesRoutes } from "./routes/images.route";
 
 import { router as commentRoutes } from "./routes/comments.route";
 const stripe = new Stripe(process.env.STRIPE_SK as string);
@@ -45,6 +46,7 @@ app.use(
     crossOriginEmbedderPolicy: false,
   })
 );
+app.use("/uploads", express.static("uploads"));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -101,6 +103,9 @@ app.use("/api", brandsRoutes);
 
 // product API
 app.use("/api", ProductRoutes);
+
+// images API
+app.use("/api/images", imagesRoutes);
 
 // product comments API
 app.use("/api", commentRoutes);
