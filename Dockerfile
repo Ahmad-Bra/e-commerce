@@ -8,6 +8,9 @@ RUN npm install
 
 COPY . .
 
+# Create uploads directory and ensure proper permissions
+RUN mkdir -p uploads/products && chmod -R 777 uploads
+
 RUN npm run build
 
 ENV NODE_ENV=production

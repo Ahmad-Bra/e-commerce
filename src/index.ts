@@ -24,10 +24,15 @@ import passport from "passport";
 const app = express();
 const PORT = process.env.PORT || 3000;
 dotenv.config();
+// Serve static files from uploads directory
+app.use("/uploads", express.static("uploads"));
+
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "img-src": ["'self'", "data:", "https:", "blob:"],
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
         frameSrc: [
