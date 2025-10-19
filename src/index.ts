@@ -31,8 +31,6 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "img-src": ["'self'", "data:", "https:", "blob:"],
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
         frameSrc: [
@@ -41,7 +39,7 @@ app.use(
           "https://hooks.stripe.com",
         ],
         connectSrc: ["'self'", "https://api.stripe.com"],
-        imgSrc: ["'self'", "data:", "blob:", "https://*.stripe.com"],
+        imgSrc: ["'self'", "data:", "blob:", "https://*.stripe.com", "https:"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
