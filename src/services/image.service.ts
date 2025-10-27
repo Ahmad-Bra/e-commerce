@@ -19,7 +19,8 @@ export class ImageService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
+    this.baseUrl =
+      process.env.BASE_URL ?? process.env.LOCAL_URL ?? "http://localhost:3001";
   }
 
   async saveImage(file: MulterFile, productId: string) {

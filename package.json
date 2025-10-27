@@ -5,9 +5,10 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-  "build": "node --max-old-space-size=2048 ./node_modules/.bin/tsc --build",
+    "build": "node --max-old-space-size=2048 ./node_modules/.bin/tsc --build",
     "start:dev": "node ./dist/index.js",
-    "dev": "nodemon ./src/index.ts"
+    "dev": "nodemon --watch src --exec \"tsx\" src/index.ts",
+    "dev:docker": "nodemon --watch src --exec \"tsx\" src/index.ts"
   },
   "keywords": [],
   "author": "",

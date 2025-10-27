@@ -48,5 +48,39 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+      - PORT=3000
+      - LOCAL_URL=${LOCAL_URL}
+      - BASE_URL=${BASE_URL}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - STRIPE_SK=${STRIPE_SK}
+      - STRIPE_PK=${STRIPE_PK}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - SECRET_KEY=${SECRET_KEY}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - LOCALECALLBACKURL=${LOCALECALLBACKURL}
+      - PRODCALLBACKURL=${PRODCALLBACKURL}
+      - MAILTRAP_TOKEN=${MAILTRAP_TOKEN}
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+    command: ["npm", "run", "dev:docker"]
+    depends_on:
+      - db
+      - redis
 volumes:
   pgdata:

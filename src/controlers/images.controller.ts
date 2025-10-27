@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ImageService } from "../services/image.service";
+import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
 
 const imageService = new ImageService();
 
@@ -27,21 +28,17 @@ export const uploadImages = async (req: Request, res: Response) => {
       files.map((file) => imageService.saveImage(file as any, productId))
     );
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Images uploaded successfully",
-        images: savedImages,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Images uploaded successfully",
+      images: savedImages,
+    });
   } catch (error: any) {
     console.error("Error uploading images:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Error uploading images",
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Error uploading images",
+    });
   }
 };
 
@@ -54,12 +51,10 @@ export const deleteImage = async (req: Request, res: Response) => {
       .json({ success: true, message: "Image deleted successfully" });
   } catch (error: any) {
     console.error("Error deleting image:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Error deleting image",
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Error deleting image",
+    });
   }
 };
 
@@ -67,15 +62,17 @@ export const getProductImages = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
     const images = await imageService.getProductImages(productId);
+
+    // set redis cache
+    redisCacheMiddleware.setCache(req.originalUrl, images);
+
     res.status(200).json({ success: true, images });
   } catch (error: any) {
     console.error("Error fetching images:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Error fetching images",
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Error fetching images",
+    });
   }
 };
 
@@ -83,20 +80,16 @@ export const setMainImage = async (req: Request, res: Response) => {
   try {
     const { productId, imageId } = req.params;
     const image = await imageService.updateProductMainImage(productId, imageId);
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Main image updated successfully",
-        image,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Main image updated successfully",
+      image,
+    });
   } catch (error: any) {
     console.error("Error updating main image:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Error updating main image",
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Error updating main image",
+    });
   }
 };

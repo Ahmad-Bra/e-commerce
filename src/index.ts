@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import sesstion from "express-session";
+import "./stratgies/google";
 import connectPgSimple from "connect-pg-simple";
 import Stripe from "stripe";
 import pg from "pg";
@@ -24,8 +25,6 @@ import passport from "passport";
 const app = express();
 const PORT = process.env.PORT || 3000;
 dotenv.config();
-// Serve static files from uploads directory
-app.use("/uploads", express.static("uploads"));
 
 app.use(
   helmet({
@@ -49,7 +48,6 @@ app.use(
     crossOriginEmbedderPolicy: false,
   })
 );
-app.use("/uploads", express.static("uploads"));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -57,7 +55,7 @@ const limiter = rateLimit({
   standardHeaders: "draft-8", // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
   ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
-  // store: ... , // Redis, Memcached, etc. See below.
+  // store: ... , /2/ Redis, Memcached, etc. See below.
 });
 
 // Apply the rate limiting middleware to all requests.
@@ -85,6 +83,8 @@ app.use(
 // Initialize passport after session middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use("/uploads", express.static("uploads"));
 
 app.use(express.json());
 
