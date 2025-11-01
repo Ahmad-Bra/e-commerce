@@ -8,8 +8,10 @@ RUN npm install
 
 COPY . .
 
-# Create uploads directory and ensure proper permissions
-RUN mkdir -p uploads/products && chmod -R 777 uploads
+# Create uploads directories and ensure proper permissions
+RUN mkdir -p /app/uploads/products /app/uploads/profile && \
+    chown -R node:node /app/uploads && \
+    chmod -R 755 /app/uploads
 
 RUN npm run build
 

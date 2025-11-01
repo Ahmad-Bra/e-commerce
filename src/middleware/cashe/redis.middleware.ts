@@ -45,7 +45,11 @@ export class RedisCacheMiddleware extends RedisClient {
     super();
   }
 
-  public getCache = async (req: Request, res: Response, next: NextFunction) => {
+  public getCache = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> => {
     const key = req.originalUrl;
     const { page, limit } = req.query;
     try {

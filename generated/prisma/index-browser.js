@@ -132,6 +132,19 @@ exports.Prisma.UserScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.ProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  first_name: 'first_name',
+  last_name: 'last_name',
+  address_detail: 'address_detail',
+  phone_number: 'phone_number',
+  city: 'city',
+  socialLinks: 'socialLinks',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.ProductsScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -149,6 +162,18 @@ exports.Prisma.ProductsScalarFieldEnum = {
   mainImageUrl: 'mainImageUrl',
   created_at: 'created_at',
   updated_at: 'updated_at'
+};
+
+exports.Prisma.Profile_pictureScalarFieldEnum = {
+  id: 'id',
+  filename: 'filename',
+  path: 'path',
+  url: 'url',
+  mimetype: 'mimetype',
+  size: 'size',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  userId: 'userId'
 };
 
 exports.Prisma.ImageScalarFieldEnum = {
@@ -213,6 +238,19 @@ exports.Prisma.WishlistItemScalarFieldEnum = {
   productId: 'productId'
 };
 
+exports.Prisma.AddressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  street: 'street',
+  city: 'city',
+  state: 'state',
+  zip_code: 'zip_code',
+  country: 'country',
+  phone: 'phone',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.GoogleScalarFieldEnum = {
   id: 'id',
   username: 'username',
@@ -222,6 +260,11 @@ exports.Prisma.GoogleScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.JsonNullValueInput = {
@@ -247,7 +290,9 @@ exports.Prisma.JsonNullValueFilter = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  profile: 'profile',
   Products: 'Products',
+  profile_picture: 'profile_picture',
   Image: 'Image',
   Cart: 'Cart',
   CartItem: 'CartItem',
@@ -256,6 +301,7 @@ exports.Prisma.ModelName = {
   Comments: 'Comments',
   Wishlist: 'Wishlist',
   WishlistItem: 'WishlistItem',
+  address: 'address',
   Google: 'Google'
 };
 

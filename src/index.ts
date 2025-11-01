@@ -16,6 +16,8 @@ import { router as authRoutes } from "./routes/auth/authentication.route";
 import { router as wishlistRoutes } from "./routes/wishlist.route";
 import { router as paymentsRoutes } from "./routes/payments.route";
 import { router as imagesRoutes } from "./routes/images.route";
+import { router as addressRoutes } from "./routes/address.route";
+import { router as profileRoutes } from "./routes/profile.route";
 
 import { router as commentRoutes } from "./routes/comments.route";
 const stripe = new Stripe(process.env.STRIPE_SK as string);
@@ -55,7 +57,6 @@ const limiter = rateLimit({
   standardHeaders: "draft-8", // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
   ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
-  // store: ... , /2/ Redis, Memcached, etc. See below.
 });
 
 // Apply the rate limiting middleware to all requests.
@@ -107,8 +108,14 @@ app.use("/api", brandsRoutes);
 // product API
 app.use("/api", ProductRoutes);
 
+// address API
+app.use("/api", addressRoutes);
+
 // images API
-app.use("/api/images", imagesRoutes);
+app.use("/api", imagesRoutes);
+
+// profile API
+app.use("/api", profileRoutes);
 
 // product comments API
 app.use("/api", commentRoutes);

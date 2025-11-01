@@ -1,3 +1,5 @@
+import { isString } from "util";
+
 export const userRules = {
   email: {
     isString: {
@@ -177,6 +179,121 @@ export const categoryRules = {
     isLength: {
       options: { min: 5, max: 1000 },
       errorMessage: "Category description must be 5-1000 chars",
+    },
+  },
+};
+export const addressRules = {
+  street: {
+    isString: { errorMessage: "Street must be a string" },
+    notEmpty: { errorMessage: "Street is required" },
+    isLength: {
+      options: { min: 3, max: 200 },
+      errorMessage: "Street must be 3-200 chars",
+    },
+  },
+  city: {
+    isString: { errorMessage: "City must be a string" },
+    notEmpty: { errorMessage: "City is required" },
+    isLength: {
+      options: { min: 3, max: 200 },
+      errorMessage: "City must be 3-200 chars",
+    },
+  },
+  state: {
+    isString: { errorMessage: "State must be a string" },
+    notEmpty: { errorMessage: "State is required" },
+    isLength: {
+      options: { min: 3, max: 200 },
+      errorMessage: "State must be 3-200 chars",
+    },
+  },
+  zip_code: {
+    isString: { errorMessage: "Zip code must be a string" },
+    notEmpty: { errorMessage: "Zip code is required" },
+    isLength: {
+      options: { min: 3, max: 20 },
+      errorMessage: "Zip code must be 3-20 chars",
+    },
+  },
+  country: {
+    isString: { errorMessage: "Country must be a string" },
+    notEmpty: { errorMessage: "Country is required" },
+    isLength: {
+      options: { min: 3, max: 100 },
+      errorMessage: "Country must be 3-100 chars",
+    },
+  },
+};
+
+export const profileRules = {
+  firstName: {
+    optional: true,
+    isString: { errorMessage: "First name must be a string" },
+    notEmpty: { errorMessage: "First name is required" },
+    isLength: {
+      options: { min: 2, max: 50 },
+      errorMessage: "First name must be 2-50 chars",
+    },
+  },
+  lastName: {
+    optional: true,
+
+    isString: { errorMessage: "Last name must be a string" },
+    notEmpty: { errorMessage: "Last name is required" },
+    isLength: {
+      options: { min: 2, max: 50 },
+      errorMessage: "Last name must be 2-50 chars",
+    },
+  },
+  email: {
+    optional: true,
+
+    isString: { errorMessage: "Email must be a string" },
+    notEmpty: { errorMessage: "Email is required" },
+    isEmail: { errorMessage: "Email must be a valid email address" },
+  },
+  phone: {
+    optional: true,
+
+    isString: { errorMessage: "Phone number must be a string" },
+    notEmpty: { errorMessage: "Phone number is required" },
+    isLength: {
+      options: { min: 7, max: 20 },
+      errorMessage: "Phone number must be 7-20 chars",
+    },
+  },
+  address_detail: {
+    optional: true,
+
+    isString: { errorMessage: "Address must be a string" },
+    notEmpty: { errorMessage: "Address is required" },
+  },
+  city: {
+    optional: true,
+
+    isString: { errorMessage: "City must be a string" },
+    notEmpty: { errorMessage: "City is required" },
+    isLength: {
+      options: { min: 2, max: 100 },
+      errorMessage: "City must be 2-100 chars",
+    },
+  },
+  socials: {
+    optional: true,
+    isArray: { errorMessage: "Socials must be an array of strings" },
+    custom: {
+      options: (value: any) => {
+        if (!Array.isArray(value)) {
+          return false;
+        }
+        for (const item of value) {
+          if (typeof item !== "string") {
+            return false;
+          }
+        }
+        return true;
+      },
+      errorMessage: "Socials must be an array of strings",
     },
   },
 };

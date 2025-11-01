@@ -45,7 +45,6 @@ export class User {
           is_verified: false,
           expiration_verify_token: new Date(Date.now() + 3600 * 1000), // 1 houre
         },
-        include: { comments: true },
       });
 
       if (!result) {
@@ -63,6 +62,8 @@ export class User {
 
       // @ts-ignore
       result.password = undefined;
+      // @ts-ignore
+      result.verify_token = undefined;
 
       respones.status(201).json({
         success: true,
@@ -244,7 +245,7 @@ export class User {
       return respones.status(400).json({ message: "invalid password" });
 
     if (!findUser.is_verified)
-      return respones.status(400).json({ message: "user not verified" });
+      return respones.status(400).json({ message: "user is not verified" });
 
     const token = new JwtService(findUser.id).getToken();
 

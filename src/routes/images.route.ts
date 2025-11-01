@@ -15,25 +15,25 @@ const router = Router();
 
 // Upload multiple images for a product
 router.post(
-  "/upload/:productId",
+  "/images/upload/:productId",
   isUserAuthorized,
   upload.array("images", 5),
   wrapAsync(uploadImages)
 );
 
 // Delete an image
-router.delete("/:imageId", isUserAuthorized, wrapAsync(deleteImage));
+router.delete("/images/:imageId", isUserAuthorized, wrapAsync(deleteImage));
 
 // Get all images for a product
 router.get(
-  "/product/:productId",
+  "/images/product/:productId",
   [isUserAuthorized, redisCacheMiddleware.getCache],
   wrapAsync(getProductImages)
 );
 
 // Set main image for a product
 router.put(
-  "/main/:productId/:imageId",
+  "/images/main/:productId/:imageId",
   isUserAuthorized,
   wrapAsync(setMainImage)
 );

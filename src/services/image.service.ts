@@ -23,6 +23,78 @@ export class ImageService {
       process.env.BASE_URL ?? process.env.LOCAL_URL ?? "http://localhost:3001";
   }
 
+  async saveProfilePicture(file: MulterFile, userId: string) {
+    try {
+      // First, ensure the user has a profile
+      let profile = await prisma.profile.findUnique({
+        where: { userId },
+      });
+
+      // If no profile exists, create one
+      if (!profile) {
+        profile = await prisma.profile.create({
+          data: {
+            userId,
+          },
+        });
+      }
+
+      // Now create the profile picture linked to the profile
+      const image = await prisma.profile_picture.create({
+        data: {
+          filename: file.originalname,
+          path: file.path,
+          url: `${this.baseUrl}/uploads/profile/${file.filename}`,
+          mimetype: file.mimetype,
+          size: file.size,
+          userId: profile.id, // Use profile.id instead of userId
+        },
+      });
+
+      return image;
+    } catch (error) {
+      // If there's an error, delete the uploaded file
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+      }
+      console.log(error);
+
+      throw error;
+    }
+  }
+
+  async deleteProfilePricture(
+    fileId: string,
+    filePath: string,
+    userId: string
+  ) {
+    try {
+      const profile = await prisma.profile.findUnique({
+        where: { userId },
+      });
+
+      if (!profile) return null;
+
+      const deletedPic = await prisma.profile_picture.delete({
+        where: { id: fileId },
+      });
+
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch (error) {
+          console.error("Error deleting profile picture file:", error);
+          // Continue with deletion from database even if file deletion fails
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting profile picture:", error);
+      throw error;
+    }
+  }
+
   async saveImage(file: MulterFile, productId: string) {
     try {
       // Create the image record in the database
