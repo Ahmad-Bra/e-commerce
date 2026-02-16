@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider      = "prisma-client-js"
   output        = "../generated/prisma"
@@ -12,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgres://e_commrece_user:lFTiISSqnoZLiSSiZF4Cl7zIB2qIwdi9@dpg-d3vkhj7diees73f2j570-a.oregon-postgres.render.com/e_commrece"
 }
 
 model User {
@@ -25,9 +19,27 @@ model User {
   expiration_verify_token DateTime?
   created_at              DateTime   @default(now())
   updated_at              DateTime   @default(now())
+  cart                    Cart?
   comments                Comments[]
   wishlists               Wishlist?
-  cart                    Cart?
+  address                 address[]
+  profile                 profile?
+  orders                  order[]
+}
+
+model profile {
+  id              String           @id @default(uuid()) @db.Uuid
+  userId          String           @unique @db.Uuid
+  profile_picture profile_picture?
+  first_name      String?
+  last_name       String?
+  address_detail  String?
+  // Products are related to orders via the `order_item` join table (many-to-many through order_item)
+  city            String?
+  socialLinks     Json?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @default(now())
+  user            User             @relation(fields: [userId], references: [id])
 }
 
 model Products {
@@ -42,46 +54,61 @@ model Products {
   cpu_info     Json
   in_stock     Int            @default(0)
   rating       Float
-  comments     Comments[]
-  brand        Brand          @relation(fields: [brandId], references: [id])
-  category     Category       @relation(fields: [categoryId], references: [id])
   brandId      String         @db.Uuid
   categoryId   String         @db.Uuid
-  mainImageUrl String? // Main product image URL
-  images       Image[] // Relation to Image model
+  mainImageUrl String?
   created_at   DateTime       @default(now())
   updated_at   DateTime       @default(now())
   CartItem     CartItem[]
+  comments     Comments[]
+  images       Image[]
+  order_item   order_item[]
+  brand        Brand          @relation(fields: [brandId], references: [id])
+  category     Category       @relation(fields: [categoryId], references: [id])
   WishlistItem WishlistItem[]
+  // Products are related to orders via the `order_item` join table (many-to-many through order_item)
+}
+
+model profile_picture {
+  id         String   @id @default(uuid()) @db.Uuid
+  filename   String
+  path       String
+  url        String
+  mimetype   String
+  size       Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  profile    profile  @relation(fields: [userId], references: [id])
+  userId     String   @unique @db.Uuid
 }
 
 model Image {
   id         String   @id @default(uuid()) @db.Uuid
-  filename   String // Original filename
-  path       String // File path on disk
-  url        String // Public URL
-  mimetype   String // File type
-  size       Int // File size in bytes
-  product    Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  filename   String
+  path       String
+  url        String
+  mimetype   String
+  size       Int
   productId  String   @db.Uuid
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+  product    Products @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Cart {
   id     String     @id @default(uuid()) @db.Uuid
-  user   User       @relation(fields: [userId], references: [id])
   userId String     @unique @db.Uuid
+  user   User       @relation(fields: [userId], references: [id])
   items  CartItem[]
 }
 
 model CartItem {
   id        String   @id @default(uuid()) @db.Uuid
-  cart      Cart     @relation(fields: [cartId], references: [id])
   cartId    String   @db.Uuid
-  product   Products @relation(fields: [productId], references: [id])
   productId String   @db.Uuid
   quantity  Int
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  product   Products @relation(fields: [productId], references: [id])
 }
 
 model Category {
@@ -109,25 +136,66 @@ model Comments {
   rating      Float
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
-  author      User     @relation(fields: [author_id], references: [id])
   author_id   String   @db.Uuid
-  product     Products @relation(fields: [product_id], references: [id])
   product_id  String   @db.Uuid
+  author      User     @relation(fields: [author_id], references: [id])
+  product     Products @relation(fields: [product_id], references: [id])
 }
 
 model Wishlist {
   id     String         @id @default(uuid()) @db.Uuid
-  user   User           @relation(fields: [userId], references: [id])
   userId String         @unique @db.Uuid
+  user   User           @relation(fields: [userId], references: [id])
   items  WishlistItem[]
 }
 
 model WishlistItem {
   id         String   @id @default(uuid()) @db.Uuid
-  wishlist   Wishlist @relation(fields: [wishlistId], references: [id])
   wishlistId String   @db.Uuid
-  product    Products @relation(fields: [productId], references: [id])
   productId  String   @db.Uuid
+  product    Products @relation(fields: [productId], references: [id])
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id])
+}
+
+model address {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  street     String
+  city       String
+  state      String
+  zip_code   String?
+  country    String
+  phone      String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  order      order[]
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model order {
+  id         String       @id @default(uuid()) @db.Uuid
+  userId     String       @db.Uuid
+  barcode    String       @unique
+  total      Float
+  status     String       @default("pending")
+  created_at DateTime     @default(now())
+  updated_at DateTime     @default(now())
+  user       User         @relation(fields: [userId], references: [id])
+  addressId  String       @db.Uuid
+  address    address      @relation(fields: [addressId], references: [id])
+  order_item order_item[]
+}
+
+model order_item {
+  id         String   @id @default(uuid()) @db.Uuid
+  order_id   String   @db.Uuid
+  product_id String   @db.Uuid
+  quantity   Int
+  price      Float
+  order      order    @relation(fields: [order_id], references: [id])
+  product    Products @relation(fields: [product_id], references: [id])
+
+  @@unique([order_id, product_id])
 }
 
 model Google {

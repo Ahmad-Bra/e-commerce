@@ -24,6 +24,7 @@ model User {
   wishlists               Wishlist?
   address                 address[]
   profile                 profile?
+  orders                  order[]
 }
 model profile {
   id              String   @id @default(uuid()) @db.Uuid
@@ -32,7 +33,6 @@ model profile {
   first_name      String?
   last_name       String?
   address_detail  String?
-  phone_number    String?
   city           String?
   socialLinks     Json?
   created_at      DateTime @default(now())
@@ -53,15 +53,18 @@ model Products {
   rating       Float
   brandId      String         @db.Uuid
   categoryId   String         @db.Uuid
-  mainImageUrl String?
+  mainImageUrl String? 
   created_at   DateTime       @default(now())
   updated_at   DateTime       @default(now())
   CartItem     CartItem[]
   comments     Comments[]
   images       Image[]
+  order_item   order_item[]
   brand        Brand          @relation(fields: [brandId], references: [id])
   category     Category       @relation(fields: [categoryId], references: [id])
-  WishlistItem WishlistItem[]
+  WishlistItem WishlistItem[] 
+  // Products are related to orders via the `order_item` join table (many-to-many through order_item)
+
 }
 
 model profile_picture {
@@ -163,9 +166,36 @@ model address {
   phone      String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+  order      order[]
   user       User     @relation(fields: [userId], references: [id])
 }
 
+model order {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @db.Uuid
+  barcode    String    @unique
+  total      Float
+  status     String    @default("pending")
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id])
+  addressId  String    @db.Uuid
+  address    address   @relation(fields: [addressId], references: [id])
+  order_item order_item[]
+}
+
+
+model order_item {
+  id        String   @id @default(uuid()) @db.Uuid
+  order_id  String   @db.Uuid
+  product_id String   @db.Uuid 
+  quantity  Int
+  price     Float
+  order     order    @relation(fields: [order_id], references: [id])
+  product   Products @relation(fields: [product_id], references: [id]) 
+
+  @@unique([order_id, product_id])
+}
 model Google {
   id       String @id @default(uuid()) @db.Uuid
   username String

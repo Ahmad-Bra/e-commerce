@@ -18,6 +18,8 @@ import { router as paymentsRoutes } from "./routes/payments.route";
 import { router as imagesRoutes } from "./routes/images.route";
 import { router as addressRoutes } from "./routes/address.route";
 import { router as profileRoutes } from "./routes/profile.route";
+import { router as orderRoutes } from "./routes/orders.route";
+import { router as checkoutRouter } from "./routes/checkout.route";
 
 import { router as commentRoutes } from "./routes/comments.route";
 const stripe = new Stripe(process.env.STRIPE_SK as string);
@@ -89,10 +91,8 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(express.json());
 
-app.get("/", (request: Request, respones: Response) => {
-  console.log(request.path);
-
-  respones.send("Hello from e-commerce api");
+app.get("/", (request: Request, responese: Response) => {
+  responese.send("Hello from e-commerce api");
   return;
 });
 
@@ -123,10 +123,15 @@ app.use("/api", commentRoutes);
 // cart API
 app.use("/api", cartRoutes);
 
+// order API
+app.use("/api", orderRoutes);
+
 // wishlist API
 app.use("/api", wishlistRoutes);
 
 // payments API
 app.use("/api", paymentsRoutes);
 
-app.listen(PORT, () => console.log(`listing in port ${PORT}`));
+// checkout API
+app.use("/api", checkoutRouter);
+app.listen(PORT, () => console.log(`listening in port ${PORT}`));

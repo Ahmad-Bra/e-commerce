@@ -1,6 +1,5 @@
 // profile uploading controller
 import { NextFunction, Request, Response } from "express";
-import { uploadProfilePicture } from "../utils/multer.config";
 import { ImageService } from "../services/image.service";
 import { PrismaClient } from "../../generated/prisma/index";
 import ErrorsValidation from "../services/ErrorsValidation";

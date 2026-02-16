@@ -10,7 +10,7 @@ import {
   wrapAsync,
 } from "../controlers/images.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
-import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 const router = Router();
 
 // Upload multiple images for a product

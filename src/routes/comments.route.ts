@@ -5,7 +5,7 @@ import { body, checkSchema } from "express-validator";
 import { commentsRules } from "../middleware/api/validation";
 export const router = express.Router();
 import { commentClass } from "../controlers/comments";
-import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 
 router.get(
   "/comments/:product_id",

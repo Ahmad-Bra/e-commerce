@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import { address } from "../controlers/address.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
-import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 import { checkSchema } from "express-validator";
 import { addressRules } from "../middleware/api/validation";
 

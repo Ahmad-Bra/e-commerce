@@ -138,7 +138,6 @@ exports.Prisma.ProfileScalarFieldEnum = {
   first_name: 'first_name',
   last_name: 'last_name',
   address_detail: 'address_detail',
-  phone_number: 'phone_number',
   city: 'city',
   socialLinks: 'socialLinks',
   created_at: 'created_at',
@@ -251,6 +250,25 @@ exports.Prisma.AddressScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  barcode: 'barcode',
+  total: 'total',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  addressId: 'addressId'
+};
+
+exports.Prisma.Order_itemScalarFieldEnum = {
+  id: 'id',
+  order_id: 'order_id',
+  product_id: 'product_id',
+  quantity: 'quantity',
+  price: 'price'
+};
+
 exports.Prisma.GoogleScalarFieldEnum = {
   id: 'id',
   username: 'username',
@@ -302,6 +320,8 @@ exports.Prisma.ModelName = {
   Wishlist: 'Wishlist',
   WishlistItem: 'WishlistItem',
   address: 'address',
+  order: 'order',
+  order_item: 'order_item',
   Google: 'Google'
 };
 

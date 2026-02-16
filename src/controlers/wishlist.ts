@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "../../generated/prisma/index";
-import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 const prisma = new PrismaClient();
 export class Wishlist {
   public async getAll(request: Request, respones: Response) {

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ImageService } from "../services/image.service";
-import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 
 const imageService = new ImageService();
 

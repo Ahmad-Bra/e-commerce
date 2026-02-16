@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "../../generated/prisma/index";
-import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 import ErrorsValidation from "../services/ErrorsValidation";
 
 const prisma = new PrismaClient();

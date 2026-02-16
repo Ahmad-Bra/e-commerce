@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "node --max-old-space-size=2048 ./node_modules/.bin/tsc --build",
+    "start": "node ./dist/index.js",
     "start:dev": "node ./dist/index.js",
     "dev": "nodemon --watch src --exec \"tsx\" src/index.ts",
     "dev:docker": "nodemon --watch src --exec \"tsx\" src/index.ts"

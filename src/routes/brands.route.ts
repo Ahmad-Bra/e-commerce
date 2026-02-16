@@ -1,8 +1,8 @@
 // @ts-nocheck
 import express from "express";
-import { Brands } from "../controlers/brands";
+import { Brands } from "../controlers/brands.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
-import { redisCacheMiddleware } from "../middleware/cashe/redis.middleware";
+import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 import { checkSchema } from "express-validator";
 import { brandRules } from "../middleware/api/validation";
 export const router = express.Router();
