@@ -1,6 +1,6 @@
 // @ts-nocheck
 import express from "express";
-import { Brands } from "../controlers/brands.controller";
+import { Brands } from "../controllers/brands.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
 import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 import { checkSchema } from "express-validator";

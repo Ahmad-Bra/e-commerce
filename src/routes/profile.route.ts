@@ -2,7 +2,7 @@
 import { Router } from "express";
 import { Request, Response } from "express";
 import { uploadProfilePicture } from "../utils/multer.config";
-import { profileController } from "../controlers/profile.controller";
+import { profileController } from "../controllers/profile.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
 import { profileRules } from "../middleware/api/validation";
 import { checkSchema } from "express-validator";

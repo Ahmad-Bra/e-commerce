@@ -1,6 +1,6 @@
 // @ts-nocheck
 import express from "express";
-import { PaymentsController } from "../controlers/payments";
+import { PaymentsController } from "../controllers/payments.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
 
 export const router = express.Router();

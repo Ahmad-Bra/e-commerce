@@ -1,5 +1,5 @@
 import { Router, RequestHandler } from "express";
-import { checkoutController } from "../controlers/checkout.controller";
+import { checkoutController } from "../controllers/checkout.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
 const router = Router();
 

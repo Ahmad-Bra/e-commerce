@@ -8,7 +8,7 @@ import {
   getProductImages,
   setMainImage,
   wrapAsync,
-} from "../controlers/images.controller";
+} from "../controllers/images.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
 import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 const router = Router();

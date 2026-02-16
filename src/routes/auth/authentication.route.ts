@@ -7,7 +7,7 @@ import { checkSchema } from "express-validator";
 import "../../stratgies/google";
 import "../../stratgies/auth/local.login";
 
-import { User } from "../../controlers/auth/authentication";
+import { User } from "../../controllers/auth/authentication.controller";
 import { userRules } from "../../middleware/api/validation";
 const userClass = new User();
 export const router = express.Router();

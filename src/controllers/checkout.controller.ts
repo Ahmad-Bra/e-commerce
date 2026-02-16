@@ -56,11 +56,9 @@ export class CheckoutController {
             .status(400)
             .json({ message: `Product ${item.productId} not found` });
         if (item.quantity > stock)
-          return res
-            .status(400)
-            .json({
-              message: `Not enough stock for product ${item.productId}`,
-            });
+          return res.status(400).json({
+            message: `Not enough stock for product ${item.productId}`,
+          });
         total += price * item.quantity;
       }
 
@@ -114,12 +112,10 @@ export class CheckoutController {
       return res.status(201).json({ success: true, order });
     } catch (error) {
       console.error("checkout error:", error);
-      return res
-        .status(500)
-        .json({
-          message: "Internal Server Error",
-          error: (error as Error).message || error,
-        });
+      return res.status(500).json({
+        message: "Internal Server Error",
+        error: (error as Error).message || error,
+      });
     }
   }
 }

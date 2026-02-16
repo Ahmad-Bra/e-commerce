@@ -1,6 +1,6 @@
 // @ts-nocheck
 import express from "express";
-import { Wishlist } from "../controlers/wishlist";
+import { Wishlist } from "../controllers/wishlist.controller";
 import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 export const router = express.Router();
 const wishlistClass = new Wishlist();

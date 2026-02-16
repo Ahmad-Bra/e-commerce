@@ -4,7 +4,7 @@ import { isUserAuthorized } from "../middleware/auth/authentication";
 import { body, checkSchema } from "express-validator";
 import { commentsRules } from "../middleware/api/validation";
 export const router = express.Router();
-import { commentClass } from "../controlers/comments";
+import { commentClass } from "../controllers/comments.controller";
 import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 
 router.get(

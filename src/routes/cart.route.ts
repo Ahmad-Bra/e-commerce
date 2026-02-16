@@ -1,6 +1,6 @@
 // @ts-nocheck
 import express from "express";
-import { Cart } from "../controlers/cart";
+import { Cart } from "../controllers/cart.controller";
 import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 import { isUserAuthorized } from "../middleware/auth/authentication";
 export const router = express.Router();

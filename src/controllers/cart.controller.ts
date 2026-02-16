@@ -28,32 +28,9 @@ export class Cart extends Calculator {
   }
 
   public async getAll(request: Request, respones: Response) {
-    // const { search } = request.query;
     const { user_id: userId } = request.params;
 
     try {
-      // if (search) {
-      //   const data = await prisma.cart.findMany({
-      //     where: {
-      //       OR: [
-      //         {
-      //           description: {
-      //             startsWith: String(search).trim(),
-      //             mode: "insensitive",
-      //           },
-      //         },
-      //         {
-      //           name: {
-      //             startsWith: String(search).trim(),
-      //             mode: "insensitive",
-      //           },
-      //         },
-      //       ],
-      //     },
-      //   });
-      //   respones.status(200).json(data);
-      //   return;
-      // }
       const data = await prisma.cart.findUnique({
         where: { userId },
         include: { items: { include: { product: true } } },
@@ -105,17 +82,6 @@ export class Cart extends Calculator {
           });
         }
       }
-
-      // const total_price = new Cart().calcTotalPrice(
-      //   product.price,
-      //   product.quantity
-      // );
-
-      // const price_with_discount = new Cart().calcDiscount(
-      //   product.price,
-      //   product.discount,
-      //   product.quantity
-      // );
 
       respones
         .status(200)

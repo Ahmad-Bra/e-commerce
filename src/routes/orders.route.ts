@@ -1,5 +1,5 @@
 import { Router, RequestHandler } from "express";
-import { orderController } from "../controlers/order.controller";
+import { orderController } from "../controllers/order.controller";
 import { isUserAuthorized } from "../middleware/auth/authentication";
 import { redisCacheMiddleware } from "../middleware/cache/redis.middleware";
 const router = Router();
